@@ -1,0 +1,40 @@
+ASM file generated like so:
+
+.ORG $4000
+INC EQUATES.INC				# Atari 5200-specific EQUATES
+INC HEADER.INC				# Setup code
+	- MAIN
+		Clear regs and RAM
+		Setup IRQ vectors and keybrd scanning
+
+Pre-includes (.2 file):
+	Set if title screen displayed
+	Setup display list address "shadow"
+	Set up default key handler if no custom key handler set
+	Enable DLI and VBI if neccessary
+	Enable NMI
+	Init print locate to start of screen buffer
+	Set up sprites base address
+End of pre-includes
+
+
+Code generated from .bas program goes here.
+
+
+Post-includes (.1 file):
+	Include files from /inc folder which are marked as dependencies (INCLUDES(useDASM, 0))
+	If title enabled, include Y2K fix
+	Include CLEARRAM function
+	Output IRQ vector table (used by what?)
+	Include default charset if no custom charset specified
+End of post-includes
+
+	Data: Strings
+	Include deferred keypad handler (if not custom deferred keypad handler specified)
+	Include deferred VBI handler (if no custom deferred VBI handler specified)
+	Data: Default display list data (if no custom DLIST specified)
+	Data: Monitor information (top of ROM):
+		Title text
+		ROM start address (vector at 0xBFFE)
+
+

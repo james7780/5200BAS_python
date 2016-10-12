@@ -1,0 +1,206 @@
+<!--== info =======================================================-->
+<!-- expref.html, Copyright (C) Jeffry Johnston, 2004              -->
+<!--===============================================================-->
+
+<html><head>
+
+<!--== browser title ==============================================-->
+<title>5200BAS Expression Reference</title>
+<!--===============================================================-->
+
+</head><body><table cellpadding="5" cellspacing="0" border="0"
+bgcolor="#C0E0FF" width="100%"><tr><td><b>
+
+<!--== page path ==================================================-->
+[ <a href="http://www.kidsquid.com/">Main</a> :
+ <a href="../../compilers.html">Compilers</a> :
+ <a href="../5200bas.html">5200BAS</a> : Expressions ]
+<!--===============================================================-->
+
+</b>
+
+<!--== horizontal menu ============================================-->
+<!--===============================================================-->
+
+</td></tr></table><div align="center"><h1>
+
+<!--== big title ==================================================-->
+5200BAS Expression Reference
+<!--===============================================================-->
+
+</h1></div>
+
+<!--== description ================================================-->
+<br><table border=0 width=90%><tr><td>
+<b><u>&lt;num&gt;</u></b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+{decimal | $hex | @binary}<br>
+<br>
+<b>Remarks</b><br>
+Decimal numbers need no prefix and should be in the range 0-65535.  Hexadecimal numbers need the "$" prefix and can range from $0 to $FFFF.  Binary numbers require the "@" prefix and can go from @0 to @1111111111111111.<br>
+<br>
+<b>Examples</b><br>
+<tt>255  $FF  @11111111  $B000</tt><br>
+
+
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>&lt;var&gt;</u></b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+variablename<br>
+<br>
+<b>Remarks</b><br>
+&lt;var&gt; does not include the registers A, X, or Y.  These will be mentioned separately if they are valid.<br>
+
+
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>= Operator</u></b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+A={X | Y | &lt;var&gt; | &lt;num&gt;<br>
+X={A | &lt;var&gt; | &lt;num&gt;}<br>
+Y={A | &lt;var&gt; | &lt;num&gt;}<br>
+&lt;var&gt;={A | X | Y | &lt;num&gt; | &lt;var&gt;}<br>
+<br>
+<br>
+<b>Remarks</b><br>
+Only the above combinations of assigns are legal.  If &lt;var&gt;=&lt;var&gt; is used, the A register is modified by an intermediate step.<br>
+<br>
+<b>Example</b><br>
+<tt>A=L:A=A*2:N=A:A=A*4:A=A+N:A=A+20:N=A 'N=L*10+20</tt><br>
+
+
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>+ Operator</u></b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+A=A+{&lt;num&gt; | &lt;var&gt;}<br>
+<table border=0 width=90%><tr>
+<td>X=X+1</td><td align=right><b>v1.01a</b></td></tr>
+<table border=0 width=90%><tr>
+<td>Y=Y+1</td><td align=right><b>v1.01a</b></td></tr></table>
+&lt;var&gt;=&lt;var&gt;+1<br>
+
+
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>++ Operator</u></b><br>
+</td><td align=right><b>v1.70</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+A=A+{&lt;num&gt; | &lt;var&gt;}<br>
+<br>
+<b>Purpose</b><br>
+To add with carry, if any.<br>
+
+
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>- Operator</u></b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+A=A-{&lt;num&gt; | &lt;var&gt;}<br>
+<table border=0 width=90%><tr>
+<td>X=X-1</td><td align=right><b>v1.01a</b></td></tr>
+<table border=0 width=90%><tr>
+<td>Y=Y-1</td><td align=right><b>v1.01a</b></td></tr></table>
+&lt;var&gt;=&lt;var&gt;-1<br>
+
+
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>-- Operator</u></b><br>
+</td><td align=right><b>v1.70</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+A=A-{&lt;num&gt; | &lt;var&gt;}<br>
+<br>
+<b>Purpose</b><br>
+To subtract with carry, if any.<br>
+
+
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>* Operator</u></b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+A=A*&lt;num&gt;<br>
+<br>
+<b>Remarks</b><br>
+&lt;num&gt; should be a power of 2.  If it is not, it will be rounded into one.<br>
+<br>
+<b>See also</b><br>
+MULADD Statement<br>
+<br>
+<b>Example</b><br>
+<tt>A=A*32</tt><br>
+
+
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>/ Operator</u></b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+A=A/&lt;num&gt;<br>
+<br>
+<b>Remarks</b><br>
+&lt;num&gt; should be a power of 2.  If it is not, it will be rounded into one.<br>
+<br>
+<b>Example</b><br>
+<tt>A=A/128</tt><br>
+
+
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>AND Operator</u></b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+A=A AND {&lt;num&gt; | &lt;var&gt;}<br>
+
+
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>OR Operator</u></b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+A=A OR {&lt;num&gt; | &lt;var&gt;}<br>
+
+
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>RND Variable</u></b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Purpose</b><br>
+To return a value between 0 and 255.<br>
+<br>
+<b>Example</b><br>
+See the DO...LOOP statements in the command reference.<br>
+
+
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>XOR Operator</u></b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+A=A XOR {&lt;num&gt; | &lt;var&gt;}<br>
+<!--===============================================================-->
+
+<table cellpadding="5" cellspacing="0" border="0" width="100%"><tr>
+
+<!--== image ======================================================-->
+<!--===============================================================-->
+
+<td valign="top" width="15%">
+
+<!--== vertical menu ==============================================-->
+<!--===============================================================-->
+
+</td><td valign="top">
+
+<!--== menu descriptions ==========================================-->
+<!--===============================================================-->
+
+</td></tr></table></body></html>

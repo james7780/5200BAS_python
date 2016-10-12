@@ -1,0 +1,63 @@
+1. Remove GOTO and perhaps other legacy BASIC rubbish
+3. CONST name=expr			(define constant)
+4. Replace DO...LOOP with WHILE...WEND
+6. WAIT VBL or WAIT LINE or WAIT milliseconds 	(wait for next frame, or specific line, or n milliseconds)
+8. COLLISION
+9. FRAME				(current frame number / attract counter)
+10. NTSC				(NTSC or PAL)
+11. DEBUGGING                           (output debugging map/sym info for use by emulator)
+12. More user-friendly documentation
+	- Examples
+	- Images
+
+
+ATTRACT should be RESETATTRACT
+
+CHARSET should be deprecated tp SET CHARSET
+- should give an error if address not on page boundary (LSB shoud be 0x00)
+
+DATA help should say it should be associated with a label (ie: there is no READ statement)
+
+DLIST should be deprecated to SET DLIST
+- (should also check for going over page boundary?)
+
+DO [WHILE] [UNTIL] could be replaced with WHILE...BREAK...WEND
+
+Subroutines called by GOSUB should be clearly marked as subroutines,
+else allow GOSUB <sub> with SUB <name> ... END SUB.
+Generate warning if GOTO in a subroutine.
+
+SOUND should take note name or midi note number (eg: "C3", "Eb4")
+
+ENVELOPE <channel>, <name> - set channel n to use envelope data at label <name> (end with an 0xFF)
+
+Could also do basic checks for:
+	- memory overlaps
+	- interrupt routine locations
+	- dlist and charset addresses
+
+More informative error messages
+
+From INtyBasic:
+CONST
+WAIT (for frame end)
+
+
+
+
+Diff between version "k" and version "l": 
+VERSION$ - 1.96 to 1.97
+OPTIONS$(19) added ("VECTTBL", default to "BD00")
+global SCRHGT added 
+Display list setup now handles ANTIC modes 2 to 15 and uses SCRHGT
+SCREEN command now handles ANTIC modes 2 to 15 and sets up SCRHGT
+Keypad debounce modified
+WIP - vector graphics
+
+
+Python-specific:
+1. Use maps for OPTIONS arrays
+2. Use map for SCRMODE to SCRHGT
+
+
+

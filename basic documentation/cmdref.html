@@ -1,0 +1,1571 @@
+<!--== info =======================================================-->
+<!-- cmdref.html, Copyright (C) Jeffry Johnston, 2004              -->
+<!--===============================================================-->
+
+<html><head>
+
+<!--== browser title ==============================================-->
+<title>5200BAS Command Reference</title>
+<!--===============================================================-->
+
+</head><body><table cellpadding="5" cellspacing="0" border="0"
+bgcolor="#C0E0FF" width="100%"><tr><td><b>
+
+<!--== page path ==================================================-->
+[ <a href="http://www.kidsquid.com/">Main</a> :
+ <a href="../../compilers.html">Compilers</a> :
+ <a href="../5200bas.html">5200BAS</a> : Commands ]
+<!--===============================================================-->
+
+</b>
+
+<!--== horizontal menu ============================================-->
+<!--===============================================================-->
+
+</td></tr></table><div align="center"><h1>
+
+<!--== big title ==================================================-->
+5200BAS Command Reference
+<!--===============================================================-->
+
+</h1></div>
+
+<!--== description ================================================-->
+<b>Index</b><br><br>
+
+<a href="#LABEL">label:</a>&nbsp;&nbsp;
+<a href="#COMMENT">'</a>&nbsp;&nbsp;
+<a href="#COLON">:</a>&nbsp;&nbsp;
+<a href="#RIGHTBRACE">}</a>&nbsp;&nbsp;
+<a href="#ASM">ASM</a>&nbsp;&nbsp;
+<a href="#ATTRACT">ATTRACT</a>&nbsp;&nbsp;
+<a href="#AUTHOR">AUTHOR</a>&nbsp;&nbsp;
+<a href="#CHARSET">CHARSET</a>&nbsp;&nbsp;
+<a href="#CLS">CLS</a>&nbsp;&nbsp;
+<a href="#DATA">DATA</a>&nbsp;&nbsp;
+<a href="#DEFINE">DEFINE</a>&nbsp;&nbsp;
+<a href="#DIV8">DIV8</a>&nbsp;&nbsp;
+<a href="#DIV16">DIV16</a>&nbsp;&nbsp;
+<a href="#DLIST">DLIST</a>&nbsp;&nbsp;
+<a href="#DO">DO</a>&nbsp;&nbsp;
+<a href="#DOWN">DOWN</a>&nbsp;&nbsp;
+<a href="#SUB">END SUB</a>&nbsp;&nbsp;
+<a href="#DO">EXIT DO</a>&nbsp;&nbsp;
+<a href="#FOR">EXIT FOR</a>&nbsp;&nbsp;
+<a href="#SELECT">EXIT SELECT</a>&nbsp;&nbsp;
+<a href="#SUB">EXIT SUB</a>&nbsp;&nbsp;
+<a href="#FOR">FOR</a>&nbsp;&nbsp;
+<a href="#GOSUB">GOSUB</a>&nbsp;&nbsp;
+<a href="#GOTO">GOTO</a>&nbsp;&nbsp;
+<a href="#IF">IF</a>&nbsp;&nbsp;
+<a href="#INKEY">INKEY</a>&nbsp;&nbsp;
+<a href="#INPUT">INPUT</a>&nbsp;&nbsp;
+<a href="#INTERNAL">INTERNAL</a>&nbsp;&nbsp;
+<a href="#JOYTRIG">JOYTRIG</a>&nbsp;&nbsp;
+<a href="#JOYTRIG2">JOYTRIG2</a>&nbsp;&nbsp;
+<a href="#JOYX">JOYX</a>&nbsp;&nbsp;
+<a href="#JOYY">JOYY</a>&nbsp;&nbsp;
+<a href="#KEYPAD">KEYPAD</a>&nbsp;&nbsp;
+<a href="#LEFT">LEFT</a>&nbsp;&nbsp;
+<a href="#LOCATE">LOCATE</a>&nbsp;&nbsp;
+<a href="#DO">LOOP</a>&nbsp;&nbsp;
+<a href="#MEMAREA">MEMAREA</a>&nbsp;&nbsp;
+<a href="#MEMCOPY">MEMCOPY</a>&nbsp;&nbsp;
+<a href="#MISSILES">MISSILES</a>&nbsp;&nbsp;
+<a href="#MOVEUP">MOVEUP</a>&nbsp;&nbsp;
+<a href="#MUL8">MUL8</a>&nbsp;&nbsp;
+<a href="#MULADD">MULADD</a>&nbsp;&nbsp;
+<a href="#FOR">NEXT</a>&nbsp;&nbsp;
+<a href="#PALETTE">PALETTE</a>&nbsp;&nbsp;
+<a href="#PEEK">PEEK</a>&nbsp;&nbsp;
+<a href="#POKE">POKE</a>&nbsp;&nbsp;
+<a href="#POP">POP</a>&nbsp;&nbsp;
+<a href="#POS">POS</a>&nbsp;&nbsp;
+<a href="#PRINT">PRINT</a>&nbsp;&nbsp;
+<a href="#PUSH">PUSH</a>&nbsp;&nbsp;
+<a href="#PUT">PUT</a>&nbsp;&nbsp;
+<a href="#GOSUB">RETURN</a>&nbsp;&nbsp;
+<a href="#RIGHT">RIGHT</a>&nbsp;&nbsp;
+<a href="#SCREEN">SCREEN</a>&nbsp;&nbsp;
+<a href="#SELECT">SELECT CASE</a>&nbsp;&nbsp;
+<a href="#SET">SET</a>&nbsp;&nbsp;
+<a href="#SOUND">SOUND</a>&nbsp;&nbsp;
+<a href="#SPRITES">SPRITES</a>&nbsp;&nbsp;
+<a href="#SUB">SUB</a>&nbsp;&nbsp;
+<a href="#TITLE">TITLE</a>&nbsp;&nbsp;
+<a href="#UP">UP</a>&nbsp;&nbsp;
+<a href="#VOLUME">VOLUME</a>
+<br>
+
+
+<br><a name=LABEL><hr><br><table border=0 width=90%><tr><td>
+<b><u>&lt;text&gt;:</u></b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+label:<br>
+<br>
+<b>Purpose</b><br>
+To specify a name for the current line.<br>
+<br>
+<b>Remarks</b><br>
+If a line needs a label, the label must be the first statement on the line, or alone on a line.<br>
+<br>
+Spaces are permitted before the label.<br>
+<br>
+<b>Example</b><br>
+<tt>FREEZE:<br>
+GOTO FREEZE</tt><br>
+
+
+<br><a name=COMMENT><hr><br><table border=0 width=90%><tr><td>
+<b><u>'</u> text</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+'text comment<br>
+<br>
+<b>Purpose</b><br>
+Provides a place to put code comments.<br>
+<br>
+<b>Remarks</b><br>
+Comments can be placed either alone or after all other program statements on a line.<br>
+<br>
+<b>Examples</b><br>
+<tt>'my program.<br>
+A=RND 'get a random number</tt><br>
+
+
+<br><a name=COLON><hr><br><table border=0 width=90%><tr><td>
+<b><u>:</u> Separator</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+statement [:[statement]]<br>
+<br>
+<b>Purpose</b><br>
+To allow for more than one program statement per line<br>
+<br>
+<b>Remarks</b><br>
+Statements after an IF...THEN GOTO statement will be executed as if they were on the next program line.<br>
+<br>
+<b>Examples</b><br>
+<tt>A=N:A=A+20:N=A<br>
+IF A=29 THEN GOTO ABC:A=A+5 'the A=A+5 will be executed when A<>29<br>
+IF A&gt;=30 THEN:N=0:END IF</tt><br>
+
+
+<br><a name=RIGHTBRACE><hr><br><table border=0 width=90%><tr><td>
+<b><u>}</u> Statement</b><br>
+</td><td align=right><b>v1.10a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+}<br>
+<br>
+<b>Purpose</b><br>
+To move the cursor right one character and scroll the screen if needed.<br>
+<br>
+<b>Registers modified</b><br>
+A, X, Y<br>
+<br>
+<b>Included files</b><br>
+right.inc, chkrow.inc, pos.inc, mul8.inc, moveup.inc<br>
+<br>
+<b>Example</b><br>
+<tt>PRINT "HELLO, "}:PRINT "WORLD" 'prints HELLO, WORLD</tt><br>
+
+
+<br><a name=ASM><hr><br><table border=0 width=90%><tr><td>
+<b>ASM Commands</b><br>
+</td><td align=right><b>v1.10a</b></td></tr></table>
+<br>
+<b>Commands</b><br>
+<br>
+<table>
+<tr><td width=14%>LDA</td><td width=14%>LDX</td><td width=14%>LDY</td><td width=14%>STA</td><td width=14%>STX</td><td width=14%>STY</td><td width=14%>TAX</td></tr>
+<tr><td>TAY</td><td>TXA</td><td>TYA</td><td>TXS</td><td>TSX</td><td>JMP</td><td>JSR</td></tr>
+<tr><td>RTS</td><td>CMP</td><td>CPX</td><td>CPY</td><td>BNE</td><td>BEQ</td><td>BMI</td></tr>
+<tr><td>BPL</td><td>BCC</td><td>BCS</td><td>BVC</td><td>BVS</td><td>ADC</td><td>SBC</td></tr>
+<tr><td>AND</td><td>ORA</td><td>EOR</td><td>INC</td><td>DEC</td><td>INX</td><td>INY</td></tr>
+<tr><td>DEX</td><td>DEY</td><td>ROR</td><td>ROL</td><td>LSR</td><td>ASL</td><td>CLC</td></tr>
+<tr><td>SEC</td><td>CLD</td><td>SED</td><td>CLI</td><td>SEI</td><td>BRK</td><td>CLV</td></tr>
+<tr><td>PHA</td><td>PLA</td><td>PHP</td><td>PLP</td><td>BRK</td><td>BIT</td><td>RTI</td></tr>
+<tr><td>NOP</td><td>.ORG</td><td>.END</td><td>#INCLUDE</td><td>.BYTE</td><td>.WORD</td><td>.TEXT</td></tr>
+</table>
+<br>
+<b>Purpose</b><br>
+To be able to include plain ASM statements in the code.<br>
+<br>
+<b>Remarks</b><br>
+Each ASM statement should be alone on the line.  Use ; rather than ' for trailing comments.<br>
+<br>
+<b>Examples</b><br>
+<tt>CLI ;clear interrupt enable<br>
+.ORG $A000<br>
+#INCLUDE MYDATA.INC<br>
+.BYTE $00,$01,$02</tt><br>
+
+
+<br><a name=ATTRACT></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>ATTRACT</u> Statement</b><br>
+</td><td align=right><b>v1.50</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+ATTRACT<br>
+<br>
+<b>Purpose</b><br>
+To reset the attract mode timer.  A good time to do this is after a key press or joystick movement.<br>
+<br>
+<b>Registers modified</b><br>
+A<br>
+<br>
+<b>Example</b><br>
+<tt>INPUT K:ATTRACT</tt><br>
+
+
+<br><a name=AUTHOR></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>AUTHOR</u> Statement</b><br>
+</td><td align=right><b>v1.70</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+AUTHOR " &lt;text&gt; "<br>
+<br>
+<b>Purpose</b><br>
+To set the scrolling ATARI screen game author & copyright message.<br>
+<br>
+<b>Remarks</b><br>
+Lowercase letters in &lt;text&gt; become capital letters and change colors.  Capital letters remain capitals.<br>
+<br>
+The copyright text can be a maximum of 20 characters in length.<br>
+<br>
+<b>Example</b><br>
+<tt>AUTHOR "(C) 2002 J. JOHNSTON"</tt><br>
+
+
+<br><a name=CHARSET></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>CHARSET</u> Statement</b><br>
+</td><td align=right><b>v1.10a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+CHARSET &lt;16-bit memory address&gt;<br>
+<br>
+<b>Purpose</b><br>
+To change the character set using the data at the specified memory address.<br>
+<br>
+<b>Remarks</b><br>
+This command only examines the high byte of the address.  For example: $1234 becomes $12, $B000 becomes $B0, and $56 becomes $00 because it is interpreted as $0056.<br>
+<br>
+<b>Registers modified</b><br>
+A<br>
+<br>
+<b>Example</b><br>
+<tt>CHARSET $A400 'set character set location to page $A4</tt><br>
+
+
+<br><a name=CLS></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>CLS</u> Statement</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+CLS<br>
+<br>
+<b>Purpose</b><br>
+To clear the screen.<br>
+<br>
+<b>Remarks</b><br>
+This command will only work properly for ANTIC 2 or 4 screens.<br>
+<br>
+<b>Registers modified</b><br>
+A,Y<br>
+<br>
+<b>Included files</b><br>
+cls.inc<br>
+<br>
+<b>Example</b><br>
+<tt>CLS 'clear the screen</tt><br>
+
+
+<br><a name=DATA></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>DATA</u> Statement (deprecated)</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+DATA {CHAR | SPRITE} &lt;list of constants&gt;<br>
+<br>
+<b>Purpose</b><br>
+To store the numeric constants that are needed to build characters or sprites.  This statement has been implemented, but there is no way to make use of the data collected.  Use <a href="#ASM">#INCLUDE</a> or <a href="#ASM">.BYTE</a> instead.<br>
+<br>
+<b>Remarks</b><br>
+DATA statements are non-executable and may be placed anywhere in the program.  A DATA statement may contain as many constants as will fit on a line (separated by commas).  Any number of DATA statements may be used in a program.  The data contained therein may be thought of as one continuous list of items, regardless of how many items are on a line or where the lines are placed in the program.<br>
+<br>
+&lt;list of constants&gt; should only contain numbers in the range 0-255 decimal.<br>
+
+
+<br><a name=DEFINE></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>DEFINE</u> Statement</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+DEFINE &lt;variable name&gt;,&lt;zero page memory address&gt;<br>
+<table border=0 width=90%><tr><td>DEFINE &lt;variable name&gt;,&lt;any memory address&gt;</td><td align=right><b>v1.10a</b></td></tr></table>
+<br>
+<b>Purpose</b><br>
+To create a label for a memory address that can be referenced by &lt;variable name&gt;.<br>
+<br>
+<b>Remarks</b><br>
+&lt;variable name&gt; must not be A, X, or Y.<br>
+<br>
+<b>Example</b><br>
+<tt>DEFINE COUNT,$FF</tt><br>
+
+
+<br><a name=DIV8></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>DIV8</u> Statement</b><br>
+</td><td align=right><b>v1.60</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+DIV8<br>
+<br>
+<b>Operation</b><br>
+TEMPL remainder A=TEMPL/TEMPH<br>
+<br>
+<b>Purpose</b><br>
+To divide two 8 bit numbers and return an 8-bit result and remainder.<br>
+<br>
+<b>Remarks</b><br>
+To use DIV8, prepare the variables then issue the statement.  The variables TEMPL and TEMPH represent the 8-bit numbers that will be used in the division.<br>
+<br>
+<b>Registers modified</b><br>
+A, X<br>
+<br>
+<b>Included files</b><br>
+div8.inc<br>
+<br>
+<b>Example</b><br>
+<tt>TEMPL=123:TEMPH=12:DIV8 '123/12, result: TEMPL=10 and A=3</tt><br>
+
+
+<br><a name=DIV16></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>DIV16</u> Statement</b><br>
+</td><td align=right><b>v1.60</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+DIV16<br>
+<br>
+<b>Operation</b><br>
+TEMPH:TEMPL remainder A=TEMPH:TEMPL/FROML<br>
+<br>
+<b>Purpose</b><br>
+To divide a 16-bit number by an 8-bit number and return a 16-bit result and 8-bit remainder.<br>
+<br>
+<b>Remarks</b><br>
+To use DIV16, prepare the variables then issue the statement.  The variables TEMPH and TEMPL represent the 16-bit number to be divided (dividend).  FROML represents the divisor.<br>
+<br>
+<b>Registers modified</b><br>
+A, X<br>
+<br>
+<b>Included files</b><br>
+div16.inc<br>
+<br>
+<b>Example</b><br>
+<tt>TEMPH=$12:TEMPL=$34:FROML=$56:DIV16 '$1234/$56, result: TEMPH=$00, TEMPL=$36 and A=$10</tt><br>
+
+
+<br><a name=DLIST></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>DLIST</u> Statement</b><br>
+</td><td align=right><b>v1.40</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+DLIST &lt;num&gt;<br>
+<br>
+<b>Purpose</b><br>
+To switch to a new memory location for the display list.<br>
+<br>
+<b>Registers modified</b><br>
+A<br>
+<br>
+<b>Example</b><br>
+<tt>DLIST $A600</tt><br>
+
+
+<br><a name=DO></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>DO...LOOP</u> Statements</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+<table border=0 width=90%><tr><td>DO [ WHILE &lt;expression&gt; | UNTIL &lt;expression&gt; ]</td><td align=right><b>v1.60</b></td></tr>
+<tr><td>DO_ [ WHILE &lt;expression&gt; | UNTIL &lt;expression&gt; ]</td><td align=right><b>v1.60</b></td></tr></table>
+&nbsp;&nbsp;&nbsp;[statement block]<br>
+&nbsp;&nbsp;&nbsp;[EXIT DO]<br>
+&nbsp;&nbsp;&nbsp;[statement block]<br>
+&nbsp;&nbsp;&nbsp;[IF...THEN EXIT DO]<br>
+&nbsp;&nbsp;&nbsp;[statement block]<br>
+<table border=0 width=90%><tr><td>LOOP [ WHILE &lt;expression&gt; | UNTIL &lt;expression&gt; ]</td><td align=right><b>v1.60</b></td></tr>
+<tr><td>LOOP_ [ WHILE &lt;expression&gt; | UNTIL &lt;expression&gt; ]</td><td align=right><b>v1.60</b></td></tr></table>
+<br>
+<b>Purpose</b><br>
+To allow a series of instructions to be performed in a loop an indefinite number of times.<br>
+<br>
+<b>Remarks</b><br>
+EXIT DO must only be used inside DO...LOOP.  It can be used alone, or instead of GOTO in an IF statement.  See the <a href="#IF">IF</a> statement for a list of valid expressions.<br>
+<br>
+<b>Registers modified</b><br>
+none<br>
+<br>
+<b>Example</b><br>
+<tt>DO 'return a random number from 0 to 9.<br>
+&nbsp;&nbsp;A=RND<br>
+&nbsp;&nbsp;A=A AND 15<br>
+LOOP UNTIL A<10</tt><br>
+
+
+<br><a name=DOWN></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>DOWN</u> Statement</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+DOWN<br>
+<br>
+<b>Purpose</b><br>
+Moves the cursor down toward the bottom of the screen by one row.<br>
+<br>
+<b>Remarks</b><br>
+Assumes a 40-character line.<br>
+<br>
+<b>Registers modified</b><br>
+X<br>
+<br>
+<b>Included files</b><br>
+down.inc, right.inc<br>
+<br>
+<b>Example</b><br>
+<tt>PRINT "HI":DOWN:PRINT "THERE"</tt><br>
+<br>
+displays<br>
+<br>
+<tt>HI<br>
+THERE</tt><br>
+
+
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>END IF</u> Statement</b><br>
+</td><td align=right><b>v1.60</b></td></tr></table>
+See <a href="#IF">IF...THEN</a> statements.<br>
+
+
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>END SUB, EXIT SUB</u> Statements</b><br>
+</td><td align=right><b>v1.30</b></td></tr></table>
+See <a href="#SUB">SUB</a> statement.  END SUB replaces END DLI.<br>
+
+
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>EXIT DO, EXIT FOR and EXIT SELECT</u> Statements</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+See <a href="#DO">DO...LOOP</a>, <a href="#FOR">FOR...NEXT</a>, or <a href="#SELECT">SELECT CASE</a> statements.<br>
+
+
+<br><a name=FOR></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>FOR...NEXT</u> Statements</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+FOR &lt;variable&gt; TO &lt;final&gt;<br>
+&nbsp;&nbsp;[statement block]<br>
+&nbsp;&nbsp;[EXIT FOR]<br>
+&nbsp;&nbsp;[statement block]<br>
+&nbsp;&nbsp;[IF...THEN EXIT FOR]<br>
+&nbsp;&nbsp;[statement block]<br>
+NEXT <variable><br>
+<table border=0 width=90%><tr><td>FOR_ &lt;variable&gt; TO &lt;final&gt;</td><td align=right><b>v1.20</b></td></tr></table>
+<br>
+<b>Purpose</b><br>
+To allow a series of instructions to be performed in a loop a given number of times.<br>
+<br>
+<b>Remarks</b><br>
+&lt;variable&gt; is used as a counter, and must not be A, X, or Y.  It should contain the initial value of the counter.  The program lines following the FOR statement are executed until the NEXT statement is encountered or until interrupted by EXIT FOR.  Then the value of the counter is incremented by 1.  A check is performed to see if the value of the counter is now greater than the final value &lt;final&gt;.  If it is not greater, execution continues at the statement after the FOR statement and the process is repeated.  If it is greater, or an EXIT FOR statement is encountered, execution continues with the statement following the NEXT statement.  This is a FOR...NEXT loop.<br>
+<br>
+&lt;final&gt; can be any variable, register, or number from 0-255.  The register A is destroyed each time the FOR statement is executed.<br>
+<br>
+The body of the loop is skipped if the initial value of &lt;variable&gt; is greater than &lt;final&gt;.<br>
+<br>
+If the FOR loop is too large and generates an out of range error in the assembler, use FOR_ instead.  FOR_ uses a JMP instruction to reach the target label, at the expense of a few bytes for an extra branch instruction.<br>
+<br>
+<b>Registers modified</b><br>
+A<br>
+<br>
+<b>Example</b><br>
+<tt>Z=65:FOR Z TO 90:PRINT CHR$(A):RIGHT:NEXT Z</tt><br>
+
+
+<br><a name=GOSUB></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>GOSUB...RETURN</u> Statements</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+GOSUB &lt;line label&gt;<br>
+.<br>
+.<br>
+.<br>
+&lt;line label&gt;<br>
+[statement block]<br>
+RETURN<br>
+<br>
+<b>Purpose</b><br>
+To branch to, and return from, a subroutine<br>
+<br>
+<b>Remarks</b><br>
+&lt;line label&gt; in the GOSUB statement represents the first line of the subroutine.<br>
+<br>
+A subroutine may be called any number of times in a program.  A subroutine also may be called from within another subroutine.  Such nesting of subroutines is limited only by available stack space.<br>
+<br>
+Subroutines may appear anywhere in the program, but it is recommended that the subroutine be readily distinguishable from the main program.<br>
+<br>
+<b>Registers modified</b><br>
+none<br>
+<br>
+<b>Example</b><br>
+<tt>GOSUB ABC<br>
+...<br>
+ABC:<br>
+RETURN<br>
+</tt><br>
+
+
+<br><a name=GOTO></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>GOTO</u> Statement</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+GOTO &lt;line label&gt;<br>
+<br>
+<b>Purpose</b><br>
+To branch unconditionally to a specified line label.<br>
+<br>
+<b>Remarks</b><br>
+If &lt;line label&gt; is an executable statement, that statement and those following are executed.  If it is a non-executable statement, execution proceeds at the first executable statement encountered after &lt;line label&gt;.<br>
+<br>
+<b>Registers modified</b><br>
+none<br>
+
+
+<br><a name=IF></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>IF...THEN Statements</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+<table border=0 width=90%><tr><td>IF &lt;expression&gt; THEN {GOTO &lt;line label&gt; | EXIT DO | EXIT FOR | EXIT SELECT}</td></tr>
+<tr><td>IF_ &lt;expression&gt; THEN {GOTO &lt;line label&gt; | EXIT DO | EXIT FOR | EXIT SELECT}</td><td align=right><b>v1.20</b></td></tr>
+<tr><td>IF &lt;expression&gt; THEN</td><td align=right><b>v1.60</b></td></tr>
+<tr><td>IF_ &lt;expression&gt; THEN</td><td align=right><b>v1.60</b></td></tr>
+<tr><td>{IF | IF_} &lt;expression&gt; [AND &lt;expression&gt;] [OR &lt;expression&gt;] THEN</td><td align=right><b>v1.91</b></td></tr></table>
+&nbsp;&nbsp;&nbsp;[statement block]<br>
+<table border=0 width=90%><tr><td>[ELSE]</td><td align=right><b>v1.60</b></td></tr>
+<tr><td>[ELSE_]</td><td align=right><b>v1.60</b></td></tr></table>
+&nbsp;&nbsp;&nbsp;[statement block]<br>
+<table border=0 width=90%><tr><td>END IF</td><td align=right><b>v1.60</b></td></tr></table>
+<br>
+<b>Purpose</b><br>
+To make a decision regarding program flow based on &lt;expression&gt;.<br>
+<br>
+<b>Remarks</b><br>
+If the test &lt;expression&gt; is true, then the THEN cause is executed.  If the destination label is too far away and generates an out of range error in the assembler, use IF_ instead.  IF_ uses a JMP instruction to reach the target label, at the expense of a few bytes for an extra branch instruction.  Multiple AND and OR operators can be included, but parenthesis are not supported.<br>
+<br>
+List of valid expressions:<br>
+<br>
+<table>
+<tr><td width=50%><b>Expression</b></td><td><b>Explanation</b></td></tr>
+<tr><td>A=NV</td><td>=</td></tr>
+<tr><td>A&lt;&gt;NV</td><td>&lt;&gt;</td></tr>
+<tr><td>A&lt;NV</td><td>&lt;</td></tr>
+<tr><td>A&lt;=NV</td><td>&lt;= (slower, use &lt; instead)</td></tr>
+<tr><td>A&gt;NV</td><td>&gt; (slower, use &gt;= instead)</td></tr>
+<tr><td>A&gt;=NV</td><td>&gt;=</td></tr>
+<tr><td>A&lt;&lt;NV</td><td>signed &lt;</td></tr>
+<tr><td>A&gt;&gt;=NV</td><td>signed &gt;=</td></tr>
+<tr><td>CFLAG=0</td><td>BCC</td></tr>
+<tr><td>CFLAG=1</td><td>BCS</td></tr>
+<tr><td>NFLAG=0</td><td>BMI</td></tr>
+<tr><td>NFLAG=1</td><td>BPL</td></tr>
+<tr><td>ZFLAG=0</td><td>BNE</td></tr>
+<tr><td>ZFLAG=1</td><td>BEQ</td></tr>
+</table><br>
+For CFLAG, NFLAG, and ZFLAG the constants TRUE and FALSE can be used instead of 1 or 0.<br>
+<br>
+<b>Registers modified</b><br>
+none<br>
+<br>
+<b>Examples</b><br>
+<tt>IF A=123 THEN:X=X+1:END IF<br>
+IF_ X&gt;=MYVAR THEN GOTO ABC<br>
+IF ZFLAG=TRUE THEN<br>
+END IF<br>
+</tt><br>
+
+
+<br><a name=INKEY></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>INKEY</u> Function</b><br>
+</td><td align=right><b>v1.10a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+A=INKEY<br>
+<br>
+<b>Purpose</b><br>
+To allow input from the keypad during program execution.<br>
+<br>
+<b>Remarks</b><br>
+Unlike INPUT, program execution does not pause.  The register A is replaced by the keypad value.<br>
+<br>
+Possible values returned in &lt;variable&gt;:<br>
+<table>
+<tr><td width=50%><b>Value</b></td><td><b>Key</b></td></tr>
+<tr><td>$00</td><td>0</td></tr>
+<tr><td>$01</td><td>1</td></tr>
+<tr><td>$02</td><td>2</td></tr>
+<tr><td>$03</td><td>3</td></tr>
+<tr><td>$04</td><td>4</td></tr>
+<tr><td>$05</td><td>5</td></tr>
+<tr><td>$06</td><td>6</td></tr>
+<tr><td>$07</td><td>7</td></tr>
+<tr><td>$08</td><td>8</td></tr>
+<tr><td>$09</td><td>9</td></tr>
+<tr><td>$0A</td><td>*</td></tr>
+<tr><td>$0B</td><td>#</td></tr>
+<tr><td>$0C</td><td>Start</td></tr>
+<tr><td>$0D</td><td>Pause</td></tr>
+<tr><td>$0E</td><td>Reset</td></tr>
+<tr><td>$FF</td><td>No key waiting</td></tr>
+</table>
+<br>
+<b>Registers modified</b><br>
+A, X, Y<br>
+<br>
+<b>Example</b><br>
+<tt>DO<br>
+&nbsp;&nbsp;A=INKEY<br>
+&nbsp;&nbsp;IF A=$0C THEN EXIT DO<br>
+LOOP</tt><br>
+
+
+<br><a name=INPUT></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>INPUT</u> Statement</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+INPUT &lt;variable&gt;<br>
+<br>
+<b>Purpose</b><br>
+To allow input from the keypad during program execution.<br>
+<br>
+<b>Remarks</b><br>
+When an INPUT statement is encountered, program execution pauses to wait for a keypress.  When a key is pressed, the value of the key will be placed in &lt;variable&gt; and execution will continue.<br>
+<br>
+See the <a href="#INKEY">INKEY</a> function for possible values returned in &lt;variable&gt;.  Note: $FF won't be returned by INPUT.<br>
+<br>
+<b>Registers modified</b><br>
+A, X, Y<br>
+<br>
+<b>Included files</b><br>
+input.inc<br>
+<br>
+<b>Example</b><br>
+<tt>DO<br>
+&nbsp;&nbsp;INPUT A<br>
+&nbsp;&nbsp;IF A=$0C THEN EXIT DO<br>
+LOOP</tt><br>
+
+
+<br><a name=INTERNAL></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>INTERNAL</u> Statement</b><br>
+</td><td align=right><b>v1.40</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+INTERNAL &lt;number&gt;<br>
+<br>
+<b>Purpose</b><br>
+To manually add an included file.<br>
+<br>
+<b>Remarks</b><br>
+Program statements will automatically include any needed support code.  The internal procedures and numbers may change from version to version, so use of this statement should be considered a temporary solution at best.  Contact me so that I can add a new instruction instead.<br>
+<br>
+<b>Included files</b><br>
+As requested by &lt;number&gt;<br>
+<br>
+<b>Example</b><br>
+<tt>INTERNAL 1 'Includes the CLS procedure in the source, even if CLS is never used.</tt><br>
+
+
+<br><a name=JOYTRIG></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>JOYTRIG</u> Function</b><br>
+</td><td align=right><b>v1.40</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+AXY=JOYTRIG(number)<br>
+<br>
+<b>Purpose</b><br>
+Returns joystick bottom button (main button) status.<br>
+<br>
+<b>Remarks</b><br>
+The return value will be $01 while the bottom button is not being pressed and $00 when pressed.<br>
+<br>
+Valid (number) entries:<br>
+<table>
+<tr><td width=50%><b>Value</b></td><td><b>Joystick</b></td></tr>
+<tr><td>$00</td><td>1</td></tr>
+<tr><td>$01</td><td>2</td></tr>
+<tr><td>$02</td><td>3</td></tr>
+<tr><td>$03</td><td>4</td></tr>
+</table>
+<br>
+<b>Registers modified</b><br>
+A or X or Y<br>
+<br>
+<b>Example</b><br>
+<tt>
+A=JOYTRIG(0):IF A<>$01 THEN GOTO CLICK&nbsp; 'button pushed?<br>
+RETURN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'no, return from subroutine<br>
+CLICK:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'yes<br>
+A=JOYTRIG(0):IF A<>$01 THEN GOTO CLICK&nbsp; 'wait for button release</tt><br>
+
+
+<br><a name=JOYTRIG2></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>JOYTRIG2</u> Function</b><br>
+</td><td align=right><b>v1.92</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+A=JOYTRIG2<br>
+<br>
+<b>Purpose</b><br>
+Returns joystick top button (secondary button) status.<br>
+<br>
+<b>Remarks</b><br>
+The return value will be $08 while the top button is not being pressed and $00 when pressed.  Use the <a href=#KEYPAD>KEYPAD</a> statement to select the joystick to be read.<br>
+<br>
+<b>Registers modified</b><br>
+A<br>
+<br>
+<b>Example</b><br>
+<tt>
+A=JOYTRIG2:IF ZFLAG=TRUE THEN &nbsp; 'button pushed?<br>
+&nbsp;&nbsp;DO &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; 'yes<br>
+&nbsp;&nbsp;&nbsp;&nbsp;A=JOYTRIG2 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;'button pushed?<br>
+&nbsp;&nbsp;LOOP UNTIL ZFLAG=FALSE &nbsp; &nbsp; &nbsp; &nbsp;'loop until button released<br>
+&nbsp;&nbsp;'click code goes here<br>
+END IF<br>
+
+
+<br><a name=JOYX></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>JOYX</u> Function</b><br>
+</td><td align=right><b>v1.10a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+AXY=JOYX(number)<br>
+<br>
+<b>Purpose</b><br>
+Returns joystick X reading.<br>
+<br>
+Valid (number) entries:<br>
+<table>
+<tr><td width=50%><b>Value</b></td><td><b>Joystick</b></td></tr>
+<tr><td>$00</td><td>1</td></tr>
+<tr><td>$01</td><td>2</td></tr>
+<tr><td>$02</td><td>3</td></tr>
+<tr><td>$03</td><td>4</td></tr>
+</table>
+<br>
+<b>Registers modified</b><br>
+A or X or Y<br>
+<br>
+<b>Example</b><br>
+<tt>A=JOYX(2)</tt><br>
+
+
+<br><a name=JOYY></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>JOYY</u> Function</b><br>
+</td><td align=right><b>v1.10a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+AXY=JOYY(number)<br>
+<br>
+<b>Purpose</b><br>
+Returns joystick Y reading.<br>
+<br>
+Valid (number) entries:<br>
+<table>
+<tr><td width=50%><b>Value</b></td><td><b>Joystick</b></td></tr>
+<tr><td>$00</td><td>1</td></tr>
+<tr><td>$01</td><td>2</td></tr>
+<tr><td>$02</td><td>3</td></tr>
+<tr><td>$03</td><td>4</td></tr>
+</table>
+<br>
+<b>Registers modified</b><br>
+A or X or Y<br>
+<br>
+<b>Example</b><br>
+<tt>A=JOYY(0)</tt><br>
+
+
+<br><a name=KEYPAD></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>KEYPAD</u> Statement</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+<table border=0 width=90%><tr><td>KEYPAD &lt;number&gt;</td></tr>
+<tr><td>KEYPAD FIX</td><td align=right><b>v1.50</b></td></tr></table>
+<br>
+<b>Purpose</b><br>
+To choose the controller that keypad input will be read from or enable keypad debounce.<br>
+<br>
+<b>Remarks</b><br>
+The FIX command adds code for keypad debounce.  This corrects "rapid fire" problems.  It is only needed when replacing the default VBI Deferred interrupt with another, for example, when using my POK music player.<br>
+<br>
+Valid &lt;number&gt; entries:<br>
+<table>
+<tr><td width=50%><b>Value</b></td><td><b>Joystick</b></td></tr>
+<tr><td>$00</td><td>1</td></tr>
+<tr><td>$01</td><td>2</td></tr>
+<tr><td>$02</td><td>3</td></tr>
+<tr><td>$03</td><td>4</td></tr>
+</table>
+<br>
+<b>Registers modified</b><br>
+A<br>
+
+
+<br><a name=LEFT></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>LEFT</u> Statement</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+LEFT<br>
+<br>
+<b>Purpose</b><br>
+Moves the cursor toward the left of the screen by one column.<br>
+<br>
+<b>Registers modified</b><br>
+A<br>
+<br>
+<b>Included files</b><br>
+left.inc<br>
+<br>
+<b>Example</b><br>
+<tt>LOCATE 1,2:PRINT "ELLO":LEFT:PRINT "H"</tt><br>
+<br>
+displays<br>
+<br>
+<tt>HELLO</tt><br>
+
+
+<br><a name=LOCATE></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>LOCATE</u> Statement</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+LOCATE &lt;row&gt;,&lt;col&gt;<br>
+<br>
+&lt;row&gt; is a row number (vertical) on the screen.  It can be a number
+or a variable.  Range 0-23.<br>
+<br>
+&lt;col&gt; is a column number (horizontal) on the screen.  It can be a
+number or a variable.  Range 0-39.<br>
+<br>
+<b>Remarks</b><br>
+Using the variables A, X, and Y is allowed, but not recommended because they are destroyed.<br>
+<br>
+Assumes a 40-character line.  No bounds checking is performed.  If a 16-bit number is entered, only the lower byte is used.  The calculations are performed at compile time if no variables are used.<br>
+<br>
+<b>Registers modified</b><br>
+A, X, Y (however, if no variables are used then only A is modified)<br>
+<br>
+<b>Included files</b><br>
+locate.inc<br>
+<br>
+<b>Examples</b><br>
+<tt>LOCATE 23,39<br>
+LOCATE 0,Q<br>
+LOCATE MY,MX<br>
+</tt><br>
+
+
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>LOOP</u> Statement</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+See <a href="#DO">DO...LOOP</a> statements.<br>
+
+
+<br><a name=MEMAREA></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>MEMAREA</u> Statement</b><br>
+</td><td align=right><b>v1.20</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+MEMAREA &lt;source&gt;,&lt;destination&gt,&lt;bytes&gt;,&lt;line length&gt;,&lt;skip length&gt;<br>
+<br>
+&lt;source&gt;, &lt;destination&gt, and &lt;bytes&gt; are treated as 16-bit numbers, &lt;line length&gt; and &lt;skip length&gt; as 8-bit.<br>
+<br>
+<b>Purpose</b><br>
+To copy a block of memory in a non-contiguous fashion.<br>
+<br>
+<b>Remarks</b><br>
+This statement is much like MEMCOPY, however, it allows for more control over the copy process.  &lt;line length&gt; specifies the number of bytes that are written before a skip occurs.  &lt;skip length&gt; defines the number of bytes of memory to skip over before writing again.<br>
+<br>
+<b>Registers modified</b><br>
+A, Y<br>
+<br>
+<b>Included files</b><br>
+memarea.inc<br>
+<br>
+<b>Example</b><br>
+<tt>MEMAREA $83C0,$1143,75,5,35   'draw door</tt><br>
+
+
+<br><a name=MEMCOPY></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>MEMCOPY</u> Statement</b><br>
+</td><td align=right><b>v1.20</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+MEMCOPY &lt;source&gt;,&lt;destination&gt,&lt;bytes&gt;<br>
+<br>
+&lt;source&gt;, &lt;destination&gt, and &lt;bytes&gt; are all treated as 16-bit numbers.<br>
+<br>
+<b>Purpose</b><br>
+To copy a block of memory.<br>
+<br>
+<b>Registers modified</b><br>
+A, Y<br>
+<br>
+<b>Included files</b><br>
+memcopy.inc<br>
+<br>
+<b>Example</b><br>
+<tt>MEMCOPY $8000,$1000,960       'draw room</tt><br>
+
+
+<br><a name=MISSILES></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>MISSILES</u> Statement</b><br>
+</td><td align=right><b>v1.90</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+MISSILES { ON | OFF }<br>
+<br>
+<b>Purpose</b><br>
+To turn missile display on or off.<br>
+<br>
+<b>Remarks</b><br>
+Missiles are on by default, but are not displayed if sprites are off.<br>
+<br>
+<b>Registers modified</b><br>
+A<br>
+<br>
+<b>See also</b><br>
+<a href="#SPRITES">SPRITES</a> statement<br>
+<br>
+<b>Example</b><br>
+<tt>MISSILES OFF</tt><br>
+
+
+<br><a name=MOVEUP></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>MOVEUP</u> Statement</b><br>
+</td><td align=right><b>v1.10a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+MOVEUP<br>
+<br>
+<b>Purpose</b><br>
+To scroll the screen up one line.<br>
+<br>
+<b>Remarks</b><br>
+The screen contents are shifted 40 characters to the left.  This moves the screen up one line.  The previous top line is discarded.  The new bottom line is blank.<br>
+<br>
+<b>Registers modified</b><br>
+A, X, Y<br>
+<br>
+<b>Included files</b><br>
+moveup.inc<br>
+<br>
+<b>Example</b><br>
+<tt>MOVEUP:LOCATE 23,0:PRINT "&gt;"}</tt><br>
+
+
+<br><a name=MUL8></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>MUL8</u> Statement</b><br>
+</td><td align=right><b>v1.60</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+MUL8<br>
+<br>
+<b>Operation</b><br>
+A=TEMPL*TEMPH<br>
+<br>
+<b>Purpose</b><br>
+To multiply two 8-bit numbers and return an 8-bit result.<br>
+<br>
+<b>Remarks</b><br>
+To use MUL8, prepare the variables then issue the statement.  The variables TEMPL and TEMPH represent the 8-bit numbers to be multiplied.<br>
+<br>
+<b>Registers modified</b><br>
+A, X<br>
+<br>
+<b>Included files</b><br>
+mul8.inc<br>
+<br>
+<b>Example</b><br>
+<tt>TEMPL=20:TEMPH=5:MUL8 '20*5, result is: A=100</tt><br>
+
+
+<br><a name=MULADD></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>MULADD</u> Statement</b><br>
+</td><td align=right><b>v1.20</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+MULADD<br>
+<br>
+<b>Operation</b><br>
+(X:A)=A*Y+(X:TEMPL), if Y>0<br>
+<br>
+<b>Purpose</b><br>
+To multiply two 8 bit numbers, add a 16-bit number, and return a 16-bit result.<br>
+<br>
+<b>Remarks</b><br>
+To use MULADD, prepare the variables then issue the statement.  The variables A and Y represent the 8-bit numbers that will be multiplied together.  Y should not be 0.  The variable X should contain the high byte of the 16-bit quantity to add.  The equate variable TEMPL should be used to store the low byte.  Be sure to rearrange the storage order of the registers so that none of A, X, or Y are overwritten.  It is easy to forget that a statement like TEMPL=MYVAR will write to A as well as TEMPL.<br>
+<br>
+This was never originally intended to be a separate command in the language, but it has turned out to be so useful that I had to include it.<br>
+<br>
+<b>Registers modified</b><br>
+A, X, Y<br>
+<br>
+<b>Included files</b><br>
+muladd.inc<br>
+<br>
+<b>Example</b><br>
+<tt>TEMPL=MX:X=$20:Y=TX:A=MY:MULADD<br>
+TEMPL=A:TEMPH=X:Y=0:A=V:POKE TEMPL*Y,A</tt><br>
+
+
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>NEXT</u> Statement</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+See <a href="#FOR">FOR...NEXT</a> statements.<br>
+
+
+<br><a name=PALETTE></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>PALETTE</u> Statement</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+PALETTE &lt;number&gt,&lt;color&gt;<br>
+<br>
+<b>Purpose</b><br>
+To set the color for various screen elements.<br>
+<br>
+<b>Remarks</b><br>
+For an explanation of &lt;color&gt; values, see the Atari Reference Manual.  &lt;color&gt; can be a number or variable.<br>
+<br>
+Valid &lt;number&gt; entries:<br>
+<table>
+<tr><td width=50%><b>Value</b></td><td><b>Palette entry</b></td></tr>
+<tr><td>$00</td><td>Background color</td></tr>
+<tr><td>$01</td><td>Character color 1</td></tr>
+<tr><td>$02</td><td>Character color 2</td></tr>
+<tr><td>$03</td><td>Character color 3</td></tr>
+<tr><td>$04</td><td>Character color 4</td></tr>
+<tr><td>$05</td><td>Sprite color 1</td></tr>
+<tr><td>$06</td><td>Sprite color 2</td></tr>
+<tr><td>$07</td><td>Sprite color 3</td></tr>
+<tr><td>$08</td><td>Sprite color 4</td></tr>
+</table>
+<br>
+<b>Registers modified</b><br>
+A<br>
+<br>
+<b>Example</b><br>
+<tt>PALETTE 0,$30</tt><br>
+
+
+<br><a name=PEEK></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>PEEK</u> Function</b><br>
+</td><td align=right><b>v1.10a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+AXY=PEEK(NV)<br>
+AY=PEEK(NV+X)<br>
+AX=PEEK(NV+Y)<br>
+A=PEEK(NV*Y) or A=PEEK(NV,Y)<br>
+<br>
+<b>Purpose</b><br>
+To read data from the specified memory address.<br>
+<br>
+<b>Registers modified</b><br>
+A or X or Y<br>
+<br>
+<b>Examples</b><br>
+<tt>A=PEEK($F0,Y)</tt><br>
+<tt>Y=PEEK($5200+X)</tt><br>
+
+
+<br><a name=POKE></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>POKE</u> Statement</b><br>
+</td><td align=right><b>v1.10a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+POKE NV,AXY<br>
+POKE NV+X,AY<br>
+POKE NV+Y,AX<br>
+POKE NV*Y,A<br>
+<br>
+<b>Purpose</b><br>
+To write to the specified memory address.<br>
+<br>
+<b>Registers modified</b><br>
+none<br>
+<br>
+<b>Examples</b><br>
+<tt>POKE $F0*Y,A</tt><br>
+<tt>POKE $5200+X,Y</tt><br>
+
+
+<br><a name=POP></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>POP</u> Statement</b><br>
+</td><td align=right><b>v1.40</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+POP { A | ALL} <br>
+<br>
+<b>Purpose</b><br>
+To restore previously saved A, X, and Y registers, or just the A register.  This command replaces POPA.<br>
+<br>
+<b>Registers modified</b><br>
+A or A, X, Y<br>
+<br>
+<b>Examples</b><br>
+<tt>POP A<br>
+POP ALL</tt><br>
+
+
+<br><a name=POS></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>POS</u> Function</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+POS<br>
+<br>
+<b>Purpose</b><br>
+To get the current cursor location.<br>
+<br>
+<b>Remarks</b><br>
+The current cursor row is returned in X.  The current column is returned in A.<br>
+<br>
+The values should range from 0-23 for the row and 0-39 for the column, but could be outside this range if an invalid LOCATE statement was used.<br>
+<br>
+<b>Registers modified</b><br>
+A, X, Y<br>
+<br>
+<b>Included files</b><br>
+pos.inc, mul8.inc<br>
+<br>
+<b>Example</b><br>
+<tt>POS:MY=X:MX=A</tt><br>
+
+
+<br><a name=PRINT></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>PRINT</u> Statement</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+<table border=0 width=90%><tr><td>PRINT " &lt;text&gt; { &lt;char&gt; }"</td><td align=right><b>v1.40</b></td></tr>
+<tr><td>PRINT CHR$( &lt;num&gt; )</td></tr>
+<tr><td>PRINT</td><td align=right><b>v1.10a</b></td></tr></table>
+<br>
+<b>Purpose</b><br>
+To output text or data on the screen.<br>
+<br>
+<b>Remarks</b><br>
+There are three different forms of the PRINT statement.  The first form allows printing of &lt;text&gt;.  Non-printable characters can be entered by number surrounded by brackets.  The second form prints the character associated with &lt;num&gt;.  The third form performs a CRLF action positioning the cursor and scrolling the screen if necessary.<br>
+<br>
+Starting with v1.10a the ASCII characters 32-126 will no longer be converted to ATASCII.  Use the included custom character set instead.<br>
+<br>
+<b>Registers modified</b><br>
+A, Y or A, Y or A, X, Y <br>
+<br>
+<b>Included files</b><br>
+print.inc or crlf.inc, pos.inc, mul8.inc, muladd.inc, chkrow.inc, moveup.inc<br>
+<br>
+<b>Examples</b><br>
+<tt>PRINT "ATARI"<br>
+PRINT "5200BAS {2}"<br>
+PRINT CHR$(1)<br>
+PRINT</tt><br>
+
+
+<br><a name=PUSH></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>PUSH</u> Statement</b><br>
+</td><td align=right><b>v1.40</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+PUSH { A | ALL} <br>
+<br>
+<b>Purpose</b><br>
+To save either the A, X, and Y registers or just the A register on the stack.  This command replaces PUSHA.<br>
+<br>
+<b>Registers modified</b><br>
+none or A<br>
+<br>
+<b>Examples</b><br>
+<tt>PUSH A<br>
+PUSH ALL</tt><br>
+
+
+<br><a name=PUT></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>PUT</u> Statement</b><br>
+</td><td align=right><b>v1.40</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+<table border=0 width=90%>
+<tr><td>PUT ( &lt;x-coord&gt;,&lt;y-coord&gt; ), &lt;label&gt;, &lt;num&gt;</tr>
+<tr><td>PUT ( &lt;x-coord&gt;,&lt;y-coord&gt; ), &lt;label&gt;, &lt;num&gt;, &lt;height&gt;</td><td align=right><b>v1.91</b></td></tr>
+<tr><td>PUT ( &lt;x-coord&gt;,&lt;y-coord&gt; ), &lt;label&gt;, &lt;num&gt;, -&lt;height&gt;</td><td align=right><b>v1.95</b></td></tr>
+</table>
+<br>
+<b>Purpose</b><br>
+To draw a sprite or missile on the screen at the specified location.<br>
+<br>
+<b>Remarks</b><br>
+&lt;x-coord&gt; can be a number or variable and should be in the range 0-159.  &lt;y-coord&gt; can be a number or variable and should be in the range 0-191.  &lt;label&gt; specifies the name representing the location of sprite memory, can also be a number.  Sprite memory must always begin on a page boundary (i.e. the last two hex digits are 00), so if a number is specified the last two digits must be omitted.  &lt;num&gt; must be a number from 0-7 and chooses the sprite (0-3) or missile (4-7) to be positioned.  &lt;height&gt; is optional, if included it can be a number or the variable FROMH, but is recommended for speed if the sprites height is known.  If &lt;height&gt; is negative, or -FROMH is specified, the sprite will be drawn upside-down.  This is slightly slower than drawing right-side up.<br>
+<br>
+<b>Registers modified</b><br>
+A, X<br>
+<br>
+<b>See also</b><br>
+<a href="#SPRITES">SPRITES</a> statement<br>
+<br>
+<b>Included files</b><br>
+putspr.inc or putmsl.inc or putsph.inc or putmsh.inc or putspi.inc or putmsi.inc<br>
+<br>
+<b>Examples</b><br>
+<tt>PUT (XCOORD,YCOORD),$9F,0<br>
+PUT (50,100),SPRMEM,5,40<br>
+PUT (0,Y),$80,3,-FROMH</tt><br>
+
+
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>RETURN</u> Statement</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+See <a href="#GOSUB">GOSUB...RETURN</a> statements.<br>
+
+
+<br><a name=RIGHT></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>RIGHT</u> Statement</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+RIGHT<br>
+<br>
+<b>Purpose</b><br>
+Moves the cursor toward the right of the screen by one column.<br>
+<br>
+<b>Registers modified</b><br>
+none<br>
+<br>
+<b>Included files</b><br>
+right.inc<br>
+<br>
+<b>Example</b><br>
+<tt>LOCATE 1,2:PRINT "HELLO":RIGHT:PRINT "ello"</tt><br>
+<br>
+displays<br>
+<br>
+<tt>Hello</tt><br>
+
+
+<br><a name=SCREEN></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>SCREEN</u> Function</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+{A | X | Y}=SCREEN ( &lt;row&gt;,&lt;col&gt; )<br>
+A=SCREEN ( &lt;num&gt;,&lt;num&gt; )<br>
+<br>
+<b>Purpose</b><br>
+To read a character from the specified screen location.<br>
+<br>
+<b>Registers modified</b><br>
+A, X, Y or A<br>
+<br>
+<b>Included files</b><br>
+muladd.inc<br>
+<br>
+<b>Examples</b><br>
+<tt>A=SCREEN(0,0)<br>
+A=SCREEN(MY,MX)</tt><br>
+
+
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>SCREEN</u> Statement</b><br>
+</td><td align=right><b>v1.20</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+SCREEN &lt;mode&gt;<br>
+<br>
+<b>Purpose</b><br>
+To automatically set up the ANTIC display list.<br>
+<br>
+<b>Remarks</b><br>
+On program load an ANTIC 2 screen is prepared by default.  Only modes 2 and 4 are valid.<br>
+<br>
+This statement is at a very early stage.  At the moment it outputs a fixed number of identical mode lines, for building an ANTIC 2 or 4 screen, although it should work for other modes with the same number of mode lines.  If a more sophisticated display list is required, it should be made manually.<br>
+<br>
+<b>Example</b><br>
+<tt>SCREEN 4</tt><br>
+
+
+<br><a name=SELECT></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>SELECT CASE</u> Statement</b><br>
+</td><td align=right><b>v1.60</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+SELECT CASE { A | X | Y }<br>
+CASE { &lt;num&gt; | &lt;var&gt; }<br>
+<table border=0 width=90%><tr><td>&nbsp;&nbsp;&nbsp;[statement block]</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;[EXIT SELECT]</td><td align=right><b>v1.90</b></td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;[statement block]</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;[IF...THEN EXIT SELECT]</td><td align=right><b>v1.90</b></td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;[statement block]</td></tr></table>
+CASE_ { &lt;num&gt; | &lt;var&gt; }<br>
+&nbsp;&nbsp;&nbsp;[statement block]<br>
+[CASE ...<br>
+&nbsp;&nbsp;&nbsp;[statement block]]<br>
+[CASE ELSE<br>
+&nbsp;&nbsp;&nbsp;[statement block]]<br>
+END SELECT<br>
+<br>
+<b>Purpose</b><br>
+To execute code depending on the value of an initial variable.<br>
+<br>
+<b>Registers modified</b><br>
+none<br>
+<br>
+<b>Example</b><br>
+<tt>INPUT A 'get key<br>
+SELECT CASE A 'process key<br>
+CASE $04 'left<br>
+&nbsp;&nbsp;PRINT "L"}<br>
+CASE $06 'right<br>
+&nbsp;&nbsp;PRINT "R"}<br>
+CASE ELSE<br>
+&nbsp;&nbsp;PRINT "?"}<br>
+END SELECT<br>
+</tt>
+
+
+<br><a name=SET></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>SET</u> Statement</b><br>
+</td><td align=right><b>v1.30</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+SET &lt;setting&gt;=&lt;location&gt; [&lt;name&gt;]<br>
+<br>
+<b>Purpose</b><br>
+To set the locations for built in routines or redefine them.<br>
+<br>
+<b>Remarks</b><br>
+There are two forms of the SET command.  If &lt;name&gt; is not included, the built-in routine is simply placed at the new memory or ROM location.  If &lt;name&gt; is included, then the routine will be replaced by the new routine at &lt;name&gt;.  The address is still necessary so that the SUB statement can place the new code correctly.<br>
+<br>
+Valid &lt;setting&gt; entries:<br>
+<table border=0 width=90%>
+<tr><td width=90><b>Setting</b></td><td width=200><b>Meaning</b></td><td><b>Default Location</b></td></tr>
+<tr><td>VIMIRQ</td><td>Immediate</td><td>$FC03</td></tr>
+<tr><td>VVBLKI</td><td>VBI immediate</td><td>$FCB8</td></tr>
+<tr><td>VVBLKD</td><td>VBI deferred</td><td>$BC16 (ROM $FCB2)</td><td align=right><b>v1.96</b></td></tr>
+<tr><td>VDSLST</td><td>DLI (Display List Interrupt)</td><td>$FEA1</td></tr>
+<tr><td>VKYBDI</td><td>Keypad immediate</td><td>$FD02</td></tr>
+<tr><td>VKYBDF</td><td>Keypad deferred</td><td>$BC00 (ROM $FCB2)</td></tr>
+<tr><td>VTRIGR</td><td>Soft trigger</td><td>$0000</td></tr>
+<tr><td>VBRKOP</td><td>BRK opcode</td><td>$0000</td></tr>
+<tr><td>VSERIN</td><td>Serial in ready</td><td>$0000</td></tr>
+<tr><td>VSEROR</td><td>Serial out ready</td><td>$0000</td></tr>
+<tr><td>VSEROC</td><td>Serial out complete</td><td>$0000</td></tr>
+<tr><td>VTIMR1</td><td>Timer 1</td><td>$0000</td></tr>
+<tr><td>VTIMR2</td><td>Timer 2</td><td>$0000</td></tr>
+<tr><td>VTIMR4</td><td>Timer 4</td><td>$0000</td></tr>
+<tr><td>SCREEN</td><td>Screen memory</td><td>$1000</td></tr>
+<tr><td>SPRITES</td><td>Sprite graphics</td><td>$3000</td><td align=right><b>v1.40</b></td></tr>
+<tr><td>CHARSET</td><td>Initial character set</td><td>$B800 (ROM $F800)</td><td align=right><b>v1.96</b></td></tr>
+<tr><td>STRINGS</td><td>String storage (PRINT)</td><td>$B000</td></tr>
+<tr><td>DLIST</td><td>Display list</td><td>$BFB4</td><td align=right><b>v1.70</b></td></tr>
+</table>
+<br>
+The deferred IRQ is almost always the one to redefine rather than the immediate.  Vectors with $0000 are not initially defined and must also be enabled manually by setting the appropriate bits in POKMSK.
+<p>The DLIST default was $BFC7 prior to version 1.70.  The CHARSET default was $A000 and VDSLST was $BC20 prior to version 1.96.<br>
+<br>
+<b>Included files</b><br>
+keypad.inc if default VKYBDF used, defervbi.inc if default VVBLKD used<br>
+<br>
+<b>Examples</b><br>
+<tt>SET VDSLST=$A400 MYDLI 'specify new DLI routine, MYDLI at $A400</tt><br>
+<tt>SET CHARSET=$9000 'relocate the default character set to $9000</tt><br>
+<tt>SET CHARSET=$9000 MYCHARS 'don't use the default character set, use the one at $9000 instead</tt><br>
+<tt>SET CHARSET=$F800 ROM 'don't use the default character set, use the ROM set instead</tt><br>
+
+
+<br><a name=SOUND></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>SOUND</u> Statement</b><br>
+</td><td align=right><b>v1.80</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+SOUND &lt;channel&gt;, &lt;frequency&gt;<br>
+<br>
+<b>Purpose</b><br>
+To play a sound.<br>
+<br>
+<b>Remarks</b><br>
+The sound will play only when the channel volume is non-zero.  &lt;Channel&gt; should be in the range 0-3, and must be a number.  &lt;Frequency&gt; can range from 0 to 255.<br>
+<br>
+<b>Registers modified</b><br>
+A<br>
+<br>
+<b>See also</b><br>
+<a href="#VOLUME">VOLUME</a> statement.  For another way to play music, please see my Atari 5200 POK player project.<br>
+<br>
+<b>Example</b><br>
+<tt>SOUND 0,100</tt><br>
+
+
+<br><a name=SPRITES></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>SPRITES</u> Statement</b><br>
+</td><td align=right><b>v1.40</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+SPRITES { ON | OFF }<br>
+<br>
+<b>Purpose</b><br>
+To turn sprite display on or off.<br>
+<br>
+<b>Remarks</b><br>
+Sprites are off by default.<br>
+<br>
+<b>Registers modified</b><br>
+A<br>
+<br>
+<b>See also</b><br>
+<a href="#MISSILES">MISSILES</a> statement<br>
+<br>
+<b>Example</b><br>
+<tt>SPRITES ON</tt><br>
+
+
+<br><a name=SUB></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>SUB...END SUB</u> Statements</b><br>
+</td><td align=right><b>v1.30</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+SUB &lt;name&gt;<br>
+&nbsp;&nbsp;[statement block]<br>
+&nbsp;&nbsp;[EXIT SUB]<br>
+&nbsp;&nbsp;[statement block]<br>
+END SUB<br>
+<br>
+<b>Purpose</b><br>
+To allow for custom DLI's, VBI's, or other IRQ's.<br>
+<br>
+<b>Remarks</b><br>
+These commands replace the older SUB DLI...END DLI.  The registers A, X, and Y are no longer automatically saved and restored at the beginning and end of the procedure.<br>
+<br>
+&lt;name&gt; should match a name previously defined with the SET statement.  The proper offset into the ROM will automatically be included, so .ORG is not needed.<br>
+<br>
+<b>Registers modified</b><br>
+none<br>
+<br>
+<b>See also</b><br>
+<a href="#POP">POP</a> statement<br>
+
+
+<br><a name=TITLE></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>TITLE</u> Statement</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+TITLE " &lt;text&gt; "<br>
+<table border=0 width=90%><tr><td>TITLE OFF</td><td align=right><b>v1.30</b></td></tr></table>
+<br>
+<b>Purpose</b><br>
+To set the scrolling ATARI screen game title, or turn it off.<br>
+<br>
+<b>Remarks</b><br>
+Lowercase letters in &lt;text&gt; become capital letters and change colors.  Capital letters remain capitals.<br>
+<br>
+The title can be a maximum of 20 characters in length.<br>
+<br>
+<b>Included files</b><br>
+y2k.inc, if title is used<br>
+<br>
+<b>Example</b><br>
+<tt>TITLE "my game"</tt><br>
+
+
+<br><a name=UP></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>UP</u> Statement</b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+UP<br>
+<br>
+<b>Purpose</b><br>
+Moves the cursor up toward the top of the screen by one row.<br>
+<br>
+<b>Remarks</b><br>
+Assumes a 40-character line.<br>
+<br>
+<b>Registers modified</b><br>
+A, X<br>
+<br>
+<b>Included files</b><br>
+up.inc, left.inc<br>
+<br>
+<b>Example</b><br>
+<tt>LOCATE 2,1:PRINT "WORLD":UP:PRINT "HELLO"</tt><br>
+<br>
+displays<br>
+<br>
+<tt>HI<br>
+THERE</tt><br>
+
+
+<br><a name=VOLUME></a><hr><br><table border=0 width=90%><tr><td>
+<b><u>VOLUME</u> Statement</b><br>
+</td><td align=right><b>v1.81</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+VOLUME &lt;channel&gt;, &lt;noise&gt;, &lt;volume&gt;<br>
+<br>
+<b>Purpose</b><br>
+To change the volume and distortion of a sound channel.<br>
+<br>
+<b>Remarks</b><br>
+The sound will keep playing until the volume is turned off for the channel.  &lt;Channel&gt; should be in the range 0-3, and must be a number.  &lt;Noise&gt; should be an even number (or variable) between 0 and 14.  &lt;Volume&gt; should be between 0 (silence) and 15 (max volume).  The total volume of all channels should not exceed 32.<br>
+<br>
+<b>Registers modified</b><br>
+A<br>
+<br>
+<b>See also</b><br>
+For another way to play music, please see my Atari 5200 POK player project.<br>
+<br>
+<b>Example</b><br>
+<tt>VOLUME 0,6,15</tt><br>
+<!--===============================================================-->
+
+<table cellpadding="5" cellspacing="0" border="0" width="100%"><tr>
+
+<!--== image ======================================================-->
+<!--===============================================================-->
+
+<td valign="top" width="15%">
+
+<!--== vertical menu ==============================================-->
+<!--===============================================================-->
+
+</td><td valign="top">
+
+<!--== menu descriptions ==========================================-->
+<!--===============================================================-->
+
+</td></tr></table></body></html>
