@@ -7,9 +7,9 @@ General:
 
 The original 5200BAS compiler was written around y2k in QBX / QuickBasic, compiled to an .exe.
 
-The original 5200BAS.exe worked only on Windows, and does not work on Win7/Win8/Win10 (check?).
+The original 5200BAS.exe worked only on Windows, and does not work on Win10 (and probably Win8 and Win7 too).
 
-This Python version is an attempt to make 5200BAS more portable and accessible. It should work on Mac and Linux.
+This Python version is an attempt to make 5200BAS more portable and accessible. It should work on Windows, Mac or Linux.
 
 
 Requirements:
@@ -40,6 +40,16 @@ DASM filename.asm -f3
 (-f3 option specifies that we want Atari 8-bit).
 
 At this point, if there are no errors, you should have a file "a.out". Rename this to .bin and run in your favourite emulator (which should be Jum52).
+
+
+Links and references:
+
+http://sebastianmihai.com/main.php?t=62&n=Atari-5200-development-Shooting-Gallery
+- From March 2012
+- Source code for 5200Basic game
+- "dev kit" 5200bas.zip contains TASM assembler (have not verified that it works)
+
+
 
 [EOF]
 
