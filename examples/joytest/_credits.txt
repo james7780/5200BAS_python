@@ -1,0 +1,4 @@
+JOYTEST
+By SIO2 from atariage forum:
+http://atariage.com/forums/topic/220780-5200-controller-test-program/
+

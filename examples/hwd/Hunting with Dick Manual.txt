@@ -1,0 +1,48 @@
+Hunting with Dick for the Atari 5200 
+
+Dick is a life long outdoor sports enthusiast who enjoys 
+hunting and shooting guns.  
+
+In this game you play the part of Dick (yellow shirt) who
+is on a hunting trip with his buddies Harry (blue shirt)
+and Oscar (green shirt).
+
+Preparing for the big hunt, Dick is trying to improve
+his aim by shooting at a target but Harry and Oscar keep 
+getting in the way.  If Dick can hit the target, he scores
+a point which is added to the six digit scoreboard at the 
+top of the screen.  
+
+Dick is known to have some health issues and his doctor has
+prescribed a heart monitor that Dick has with him at all times.
+Dick's heart health is indicated by the markers near the 
+top of the screen to the right of the six digit score
+board.  At the start of the game Dick has 3 heart health
+markers.  
+
+Every 10 times that Dick hits the target, his confidence
+increases and his heart heals a little.  To reflect this,
+the number of heart health markers increases by one up to
+a maximum of 5.
+
+If Dick accidentally shoots Harry or Oscar though,
+Dick has a mild heart attack and looses a heart health marker.
+If Dick looses all of his heart health markers, it is
+GAME OVER for Dick.  In that case, press the START key to 
+return to the option screen.
+
+On the option screen, the player can choose a level from
+0-5.  The higher the number chosen, the narrower the playfield
+is at the start of the game.  Every 100 points earned during
+play automatically levels up until the maximum level 5 is 
+achieved.
+
+This game was created using 5200bas by Jeffry Johnston
+and is based on the source code for another 5200 game
+called Shooting Gallery by Sebastian Mihai.
+
+There are a number of features of this game that I am sure 
+people will want to adjust.  So, I am including the sources.
+Please share back your results. 
+
+Enjoy.     

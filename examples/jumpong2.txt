@@ -1,0 +1,19 @@
+JumPong V2 for Atari 5200
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+By James Higgs 2002-2004
+
+To complement the release of Jum52 V1.0, here is a simple version of Pong, written for the Atari 5200 using 5200Basic.
+
+It's an upgraded version of the original JumPong I wrote using DASM 6502 assembler in 2002, but it's still closer to a demo than a full game.
+
+Use the * and # keys on the 5200 controller to choose between joystick and paddle control.
+
+NOT TESTED ON A REAL 5200!
+
+The source code is included in case you want to fix any bugs, get it running on a real 5200, or improve it. If you do, please notify me.
+
+Have fun!
+
+- Jum
+ 

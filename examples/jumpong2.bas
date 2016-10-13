@@ -607,6 +607,8 @@ RETURN
 ' charset
 .ORG    $AC00
 #INCLUDE CHARSET1.INC
+' NOTE: If CHARSET1.INC is missing, use ASCIISET.INC instead
+'       (Characters will be wrong, but it least it will build)
 
 '---------------------------------------------------------------------
 ' DATA

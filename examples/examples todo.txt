@@ -1,0 +1,6 @@
+1. Player/missile example (like eg: yellow sub)
+2. Sound example (play a tune)
+3. Scrolling example
+4. "Vector graphics" example (if VG implemented)
+
+Can convert ASM examples to 5200BAS.

@@ -1,0 +1,44 @@
+How to convert Graphics to fonts for use with Atari 5200bas
+
+NEED:
+1.  Gimp 2.8  
+2.  G2F v3.9.8.7 
+3.  Bin2inc.exe (by same author as 5200bas - should be included)
+
+USE:
+1.  Use Gimp for windows to create (or load) a file 160 pixels
+    wide by 200 pixels deep.
+2.  From the Gimp image menu select mode indexed
+    then reduce colors to 16 or less (I use less).
+3.  Save the file in Gimp native format.
+    Apparently gimp stores some info with files in its native format
+    that it may need to process exports correctly?  
+4.  Export the image as a .gif no commments.
+5.  Open the .gif in g2f with options: 
+    preview = all
+    mode = dli
+    pixel = 2x1
+    gtia = 16g
+    screen = normal
+    video = gtia.
+    The key setting is Pixel = 2x1 (corresponds to Antic mode 4 gr. 12)
+6.  Adjust the image to your liking then Save as .asm all data
+7.  From the files g2f spits out, collect the .scr and .fnt and .tab
+8.  These files do not import directly into the 5200bas assembler.
+    Use Bin2inc.exe to convert the .scr .fnt .tab files to $HEX
+9.  Once converted, the files will be in the form of this example tab file:
+    .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$01,$01,$01,$01,$00
+10. G2F uses multiple fonts when crafting a screen
+11. The tab file contains a line by line description of which font
+    g2f used on each line of 30 lines.
+12. Each character set begins 1024 bytes (1k) ($400) from the last.
+13. So, the values in the tab file represent the offset from wherever
+    you included the character sets.  For example:  if you included the 
+    character sets at $9C00, you would look up the offset of the character base 
+    for each line in the tab file and enter the corresponding address into the
+    the "table of character set bases and palettes" if you are using my display list
+    and DLI to load the screen.  A $00 in tab would translate to a 
+    charbase $9C, a $01 in tab would translate to a charbase $A0,
+    a $02 in tab would translate to a charbase of $A4.
+14. You may have to look for where the tab file lines up to your actual screen.
+    In my case I ignored the first byte of tab file and started with the second. 
