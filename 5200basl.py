@@ -10,12 +10,13 @@
 # - OPTIONS system
 # - include system (INCLUDE$)
 
-# orginal includek.bas was split off because of 64k page limit in QBX
-# reincorporated into this file
+# NOte: the original includek.bas has been reincorporated into this file
 
 import sys
+import datetime
 
-def VERSION():              # VERSION constant
+# VERSION constant
+def VERSION():
     return "1.97"
 
 # output devices:
@@ -42,6 +43,7 @@ def VERSION():              # VERSION constant
 # TOKEN$() replaced by tokenArray
 # Q$ replaced by tokenTypes
 # DASM replaced by useDASM 
+# INCLUDES function replaced with INCLUDEASM() function
 
 # global variables (such as Python understands the concept)
 gCurrentParseLine = ' '
@@ -87,17 +89,21 @@ OPTIONNAMELIST = [ "VIMIRQ", "VVBLKI", "VVBLKD", "VDSLST", "VKYBDI", "VKYBDF", "
 # User-specified option addresses
 OVERRIDEOPTIONS = dict()
 
-J = -1
-LINENUM = 0
+J = -1              # token index
+LINENUM = 0         # output line number
 DOCOUNT = 0 ; FORCOUNT = 0 ; SELCOUNT = 0; IFCOUNT = 0
 # DODEPTH/FORDEPTH/SELDEPTH replaced by len(stack/list)
-SCRMODE = 2 ; SCRHGT = 24
-TITLE = True ; SPRRES = 0
-sST = "" ; sCHAR = "" ; sSPRITE = ""
+SCRMODE = 2         # ANTIC screen mode
+SCRHGT = 24         # Number of visible mode lines in the display list 
+TITLE = True        # Show title when booting
+SPRRES = 0          # Sprite resolution
+stringData = ""     # Strings data, written to STRINGS section
+charData = ""       # Char data, never used?
+spriteData = ""     # Set when reading sprite data, never used?
 sTITLE = "UNTITLED"
 sCOPYRIGHT = "COPYRIGHT 2002 ATARI"
 # INCLUDES$ replaced with includeArray (intialised with a list of Falses)
-includeArray = [ False for i in range(0, 23) ]                   # 23 spaces
+includeArray = [ False for i in range(0, 23) ]                   # 23 Falses
 DEBUG = True #False
 useDASM = True
 useANSIDebugColours = False                 # not supported in Python IDE's?
@@ -199,6 +205,8 @@ def main(args):
     ##T$ = T$ + MID$(DATE$, 7, 4) + "  "
     #PRINTOUT(T$ + T3$ + MID$(TIME$, 3, 3) + T2$, "~")
     PRINTOUT(sT, "~")
+    sT = "; " + str(datetime.datetime.today())
+    PRINTOUT(sT, "~")
     PRINTOUT(";========================================================", "~")
 
     if (useDASM):
@@ -280,7 +288,6 @@ def main(args):
                     ERROROUT("Missing = (equivalence operator)")
                 lhsToken = tokenArray[J]
                 rhsToken = tokenArray[J+2]
-         # TODO - Use name to function map?
                 if (lhsToken != rhsToken):
                     if (rhsToken == "JOYTRIG2"):
                         FCN_JOYTRIG2()
@@ -459,16 +466,16 @@ def main(args):
     if (DEBUG):
         print ("")
         CONSCOLOR(15)
-        print ('"' + sST + '"')
+        print ('"' + stringData + '"')
         CONSCOLOR(7)
 
-    PRINTASC(sST)
+    PRINTASC(stringData)
 
     if (not 'VKYBDF' in OVERRIDEOPTIONS):
-        INCLUDES(useDASM, 4)       # KEYPAD
+        INCLUDEASM("KEYPAD")       # KEYPAD
 
     if (not 'VVBLKD' in OVERRIDEOPTIONS):
-        INCLUDES(useDASM, 3)       # DEFERVBI
+        INCLUDEASM("DEFERVBI")       # DEFERVBI
 
     #'IF OPTIONS$(6, 1) = "" THEN
     #'  CALL INCLUDES(INCLUDE$, OPTIONS$(), DASM, 5) 'JOYSTICK
@@ -483,11 +490,11 @@ def main(args):
         PRINTOUT(".ORG    $" + DEFAULTOPTIONS['DLIST'], "~")
         PRINTOUT(".WORD", "$7070;skip 24 scan lines")
         PRINTOUT(".BYTE", "$70")
-        PRINTOUT(".BYTE", "$" + HEX2(0x40 + SCRMODE) + ";set up ANTIC" + SCRMODE + " screen")
+        PRINTOUT(".BYTE", "$" + HEX2(0x40 + SCRMODE) + ";set up ANTIC" + str(SCRMODE) + " screen")
         PRINTOUT(".WORD", "$" + DEFAULTOPTIONS['SCREEN'] + ";address of screen memory")
         for i in range(1, SCRHGT):
             PRINTOUT(".BYTE", "$" + HEX2(SCRMODE))
-            if (a == 101 and SCRMODE >= 14):
+            if (i == 101 and SCRMODE >= 14):
                 PRINTOUT(".BYTE", "$" + HEX2(0x40 + SCRMODE) + ";2nd part of ANTIC " + HEX(SCRMODE) + " screen")
                 PRINTOUT(".WORD", "$" + HEX4(DEC(DEFAULTOPTIONS['SCREEN']) + 0x1000) + ";address of screen memory")
 
@@ -520,11 +527,12 @@ def main(args):
     # Write post-include flle ("filename.1")
     outFile = open(postIncFileName, 'w')
 
-    INCLUDES(useDASM, 0)
+    # Process all asm includes pending
+    INCLUDEASM("") 
     if (TITLE):
-        INCLUDES(useDASM, 1)   # Y2K
-
-    INCLUDES(useDASM, 2)       # CLEARRAM
+        INCLUDEASM("Y2K")   # Y2K
+    INCLUDEASM("CLEARRAM")       # CLEARRAM
+    
     PRINTOUT(";-----------------------------------------------------------", "~")
     PRINTOUT("; IRQ VECTORS", "~")
     PRINTOUT(";-----------------------------------------------------------", "~")
@@ -814,6 +822,7 @@ def CMD_CHARSET():
 #end def
 
 def CMD_CLS():
+    global J, includeArray
     includeArray[0] = True
     PRINTOUT("JSR", "CLS" + COMMENT(1))
     J = J + 1
@@ -828,9 +837,9 @@ def CMD_DATA():
         token += DEC(BYTE(tokenArray[i]))
 
     if (tokenArray[J + 1] == "CHAR"):
-        sCHAR = sCHAR + token
+        charData = charData + token
     elif (tokenArray[J + 1] == "SPRITE"):
-        sSPRITE = sSPRITE + token
+        spriteData = spriteData + token
     else:
         ERROROUT("Unknown statement in data")
 #end def
@@ -862,6 +871,10 @@ def CMD_DIV8():
     J += 1
 #end def
 
+# 5200BAS TODO - This function never gets called beacuse PARSE() does not
+# recognise as a command. If we add to PASRE() command list, then SET DLIST
+# does not work as there is a confusion between the "command" and the "option"
+# (Maybe resolve by calling this function DLISTADDR or something?)
 def CMD_DLIST():
     global J, tokenTypes, tokenArray
     if (tokenTypes[J+1] != 'N'): ERROROUT("Type mismatch")
@@ -974,7 +987,7 @@ def CMD_EXIT():
 #end def
 
 def CMD_FOR(MINUS):
-    global J, tokenTypes, tokenArray
+    global J, tokenTypes, tokenArray, FORCOUNT, FORSTACK
     if (tokenTypes[J+1] != 'V'): ERROROUT("Type mismatch")
     if (tokenArray[J+2] != "TO"): ERROROUT("Syntax Error")
     if (tokenArray[J+1] in "AXY"): ERROROUT("Illegal variable A/X/Y")
@@ -984,7 +997,7 @@ def CMD_FOR(MINUS):
     PRINTOUT("FR" + sT + ":", "~" + COMMENT(4))
     J = J + 3
     LDX("A")
-    PRINTOUT("CMP", tokenArray[J+2])
+    PRINTOUT("CMP", tokenArray[J])
     if (not MINUS):
         PRINTOUT("BCC", "EF" + sT)
     else:
@@ -1330,7 +1343,7 @@ def CMD_MULADD():
 #end def
 
 def CMD_NEXT():
-    global J, tokenTypes, tokenArray
+    global J, tokenTypes, tokenArray, FORCOUNT, FORSTACK
     if (len(FORSTACK) < 1): ERROROUT("NEXT without FOR")
     if (tokenTypes[J+1] != 'V'): ERROROUT("Missing variable")
     if (tokenArray[J+1] in "AXY"):                  # CASE "A", "X", "Y"
@@ -1374,7 +1387,7 @@ def CMD_POKE():
         else: 
             sT = tokenArray[J+1]
     else:
-        ERROROUT("Type mismatch")
+        ERROROUT("Type mismatch (1st argument must be number or variable)")
 
     nextArgs = tokenArray[J+2] + tokenArray[J+3]
     if (nextArgs == "+X"):
@@ -1393,7 +1406,7 @@ def CMD_POKE():
         PRINTOUT("ST" + tokenArray[J+3], sT + COMMENT(4))
         J = J + 4
     else:
-        ERROROUT("Type mismatch")
+        ERROROUT("Type mismatch (2nd argument must be A/X/Y)")
 #end def
 
 def CMD_POP():
@@ -1420,17 +1433,17 @@ def CMD_POS():
 #end def
 
 def CMD_PRINT():
-    global J, tokenTypes, tokenArray, sST
+    global J, tokenTypes, tokenArray, stringData
     nextToken = tokenArray[J+1]
     argType = tokenTypes[J+1]
     if (argType == "S"):          #PRINT ""
         includeArray[1] = True           # MID$(INCLUDE$, 2, 1) = "*"
         FIXSTR(nextToken)
         nextToken = nextToken + chr(255)
-        T = sST.find(nextToken)
+        T = stringData.find(nextToken)
         if (T == -1):
-            T = len(sST)
-            sST = sST + nextToken
+            T = len(stringData)
+            stringData = stringData + nextToken
         sT = HEX4(T + DEC(DEFAULTOPTIONS['STRINGS']))         # strings base address
         PRINTOUT("LDA", "#$" + sT[2:4] + COMMENT(2))
         PRINTOUT("STA", "TEMPL")
@@ -1472,7 +1485,7 @@ def CMD_PUSH():
 def CMD_PUT():
     #'PUT ( 2 , 4 ) , 7 , 9 , 11
     global J, tokenTypes, tokenArray
-    syntaxCheck = tokenArray[J+1] + tokenArray[J+3] + tokenArray[J+5] + tokenArray[J+6] + tokenArray[J+8] + tokenTypes[J+10]
+    syntaxCheck = tokenArray[J+1] + tokenArray[J+3] + tokenArray[J+5] + tokenArray[J+6] + tokenArray[J+8] + tokenTypes[J+11]
     if (syntaxCheck != "(,),,N"): ERROROUT("Syntax error")
     FROMH = 0
     if (tokenTypes[J+10:J+12] == ",V"):
@@ -1960,21 +1973,21 @@ def FCN_SCREEN():
     PRINTOUT(sT2, "(SCREENL),Y")
 #end def
 
-def FINDTOKEN(s, start):
-    global tokenArray
-    T = start
-    for token in tokenArray[start:]:
-        if (tokenArray[T] == s):
-            break
-        T += 1
-
-    if (T > 31): T = -1
-
-    return (T - start)
-#end def        
+##
+##    global tokenArray
+##    T = start
+##    for token in tokenArray[start:]:
+##        if (tokenArray[T] == s):
+##            break
+##        T += 1
+##
+##    if (T > 31): T = -1
+##
+##    return (T - start)
+###end def        
         
 
-# something to do with curly braces?
+# Process string with char numbers in curly braces
 def FIXSTR(s):
     sAA = ""
     openBrace = False
@@ -1996,6 +2009,7 @@ def FIXSTR(s):
     return sAA
 #end def
 
+# Get 2-digit hex number string from decimal number
 def HEX2(decimal):
     s = hex(decimal).replace("0x", "")
     if (len(s) > 2):
@@ -2003,7 +2017,7 @@ def HEX2(decimal):
     return s.rjust(2, '0')
 #end def
  
-# argument is a decimal number        
+# Get 4-digit hex number string from a decimal number        
 def HEX4(decimal):
     if (decimal < 0):
         decimal += 65536
@@ -2050,9 +2064,7 @@ def J5(reg):
 #end def
 
 # reg = W$
-# token = TOKEN$(J)
-# tokenType = MID$(Q$, J + 1, 1)
-def LDX(reg):           #, token, tokenType):
+def LDX(reg):
     global J, tokenTypes, tokenArray
     tokenType = tokenTypes[J];
     token = tokenArray[J]
@@ -2103,12 +2115,12 @@ def PARSE(s):
                 "SEC", "CLD", "SED", "CLI", "SEI", "BRK", "CLV",
                 "PHA", "PLA", "PHP", "PLP", "BRK ", "BIT", "RTI",
                 "NOP", ".ORG", ".END", "#INCLUDE", ".BYTE", ".WORD", ".TEXT" }
-    # for operatros case below
+    # for operators case below
     operators = { "(", "XOR", "OR", "AND", ">=", "<=", "<>", "<", ">", ">>=", "<<", "=",
                   "-", "+", "--", "++", "/", "*" }
 
     # For debugging purposes
-    if (LINENUM == 97):
+    if (LINENUM == 273):
         print("breakpoint")
 
     if (DEBUG):
@@ -2244,7 +2256,9 @@ def PRINTASC(s):
             if (len(a) > 0):
                 PRINTOUT('.TEXT', '"' + a + '"')
                 a = ""
-                PRINTOUT(".BYTE", "$" + HEX2(cn))
+            #BUGFIX: PRINT ASM function uses $FF as terminator
+            #PRINTOUT(".BYTE", "$" + HEX2(cn))
+            PRINTOUT(".BYTE", "$FF")
         else:
             a = a + c
             if (len(a) >= 40):
@@ -2325,9 +2339,10 @@ def BACKSLASH(text):
     return a;
 #end def
 
-# @param JUSTINC        Index of include file to "just include"
-def INCLUDES(useDASM, JUSTINC):
-    global DEFAULTOPTIONS, OPTIONNAMELIST, includeArray, outFile
+# @param includeName        Name of asm include function to "just include", egL "Y2K", "KEYPAD"
+# @note if includeName is empty, then process all marked includes
+def INCLUDEASM(includeName):
+    global useDASM, DEFAULTOPTIONS, OPTIONNAMELIST, includeArray, outFile
 
     # "local" function definition
     def GETNUM(s):
@@ -2344,7 +2359,7 @@ def INCLUDES(useDASM, JUSTINC):
     #end local def
 
     # "local" function definition (parent = INCLUDES())
-    def INCLUDEF(fileName):
+    def INCLUDEFILE(fileName):
         fileName = "INC\\" + fileName + ".INC"
         file = open(fileName, 'r')
         for line in file:
@@ -2404,45 +2419,38 @@ def INCLUDES(useDASM, JUSTINC):
         file.close()
     #end local def
 
-    includeArray1 = [ "", "Y2K", "CLEARRAM", "DEFERVBI", "KEYPAD", "JOYSTICK" ]
-    includeArray2 = [ "", "CLS", "PRINT", "RIGHT", "LEFT", "INPUT", "MULADD",
+    # Names of options (routines) to include
+    includeNames = [ "", "CLS", "PRINT", "RIGHT", "LEFT", "INPUT", "MULADD",
                       "DIVB", "DOWN", "UP", "MUL8", "MOVEUP", "CHKROW", "CRLF",
                       "POS", "MEMCOPY", "MEMAREA", "PUTSPR", "DIV16", "PUTMSL",
                       "PUTMSH", "PUTSPH", "PUTMSI", "PUTSPI" ]
     
-    if (JUSTINC > 0 and JUSTINC < 6):
-        sFILENAME = includeArray1[JUSTINC]
-        INCLUDEF(sFILENAME)
+    if (len(includeName) > 0):
+        # Only include the specified asm routine/file
+        INCLUDEFILE(includeName)
     else:
+        # Include all include files marked in the includeArray,
+        # AND their dependencies
         T = 0
         if (True in includeArray):
             T = includeArray.index(True) + 1
         while (T > 0):
             if (T < 24):
-                sFILENAME = includeArray2[T]
-                INCLUDEF(sFILENAME)
+                INCLUDEFILE(includeNames[T])
             # Handle dependancies
             if (8 == T):
-                if (includeArray[2] == False):
-                    includeArray[2] = True
+                includeArray[2] = True
             elif (9 == T):
-                if (includeArray[3] == False):
-                    includeArray[3] = True
+                includeArray[3] = True
             elif (12 == T):
-                if (includeArray[13] == False):
-                    includeArray[13] = True
-                if (includeArray[10] == False):
-                    includeArray[10] = True
+                includeArray[13] = True
+                includeArray[10] = True
             elif (13 == T):
-                if (includeArray[13] == False):
-                    includeArray[13] = True
-                if (includeArray[5] == False):
-                    includeArray[5] = True
-                if (includeArray[11] == False):
-                    includeArray[11] = True
+                includeArray[13] = True
+                includeArray[5] = True
+                includeArray[11] = True
             elif (14 == T):
-                if (includeArray[17] == False):
-                    includeArray[17] = True
+                includeArray[17] = True
             # update include string
             includeArray[T-1] = 'x'
             # Find next
@@ -2461,6 +2469,6 @@ for s in sys.argv[1:]:
     args = args + s + ' ' 
 
 #main(args)
-main("/D jumpong2.bas")
+main("/D hello.bas")
 exit()
 
