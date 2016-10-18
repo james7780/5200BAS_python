@@ -10,6 +10,7 @@
 	- Examples
 	- Images
 
+Too much "pointer" stuff. Should be made easy for beginners (not have to worry about where the sprite data is, or where the display list is, etc). Use "DATA SPRITE" or "DEFINE SPRITE(n)" and have the pointer/address stuff done automatically.
 
 ATTRACT should be RESETATTRACT
 
@@ -59,5 +60,6 @@ Python-specific:
 1. Use maps for OPTIONS arrays
 2. Use map for SCRMODE to SCRHGT
 
-
+Python script should call DASM with the correct filename/options if compilation is successful.
+ 
 

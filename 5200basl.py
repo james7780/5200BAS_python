@@ -9,11 +9,13 @@
 # - Stack objects
 # - OPTIONS system
 # - include system (INCLUDE$)
+# - Scope limiting (reduce globals)
 
 # NOte: the original includek.bas has been reincorporated into this file
 
 import sys
 import datetime
+import subprocess
 
 # VERSION constant
 def VERSION():
@@ -49,10 +51,10 @@ def VERSION():
 gCurrentParseLine = ' '
 tokenArray = { }
 tokenTypes = ""             # NB: tokenTypes index = Q$ index - 1!
-DOSTACK = []                # list as stack (use append() and pop())
-FORSTACK = []
-SELSTACK = []               # 2-dimensional array
-IFSTACK = []
+DOStack = []                # list as stack (use append() and pop())
+FORStack = []
+SELECTStack = []               # 2-dimensional array
+IFStack = []
 numOPTIONS = 20             # 19 in QBX
 # 2-dimensional array
 # note: strings address option "B000" changed to "BB00"
@@ -91,7 +93,7 @@ OVERRIDEOPTIONS = dict()
 
 J = -1              # token index
 LINENUM = 0         # output line number
-DOCOUNT = 0 ; FORCOUNT = 0 ; SELCOUNT = 0; IFCOUNT = 0
+DOCount = 0 ; FORCount = 0 ; SELECTCount = 0; IFCount = 0
 # DODEPTH/FORDEPTH/SELDEPTH replaced by len(stack/list)
 SCRMODE = 2         # ANTIC screen mode
 SCRHGT = 24         # Number of visible mode lines in the display list 
@@ -107,9 +109,11 @@ includeArray = [ False for i in range(0, 23) ]                   # 23 Falses
 DEBUG = True #False
 useDASM = True
 useANSIDebugColours = False                 # not supported in Python IDE's?
+errorString = ""														# compilation error string
 
 # Main function (to allow forward declarations)
-# args = concatenated arguments
+# @param args			concatenated arguments
+# @return 				True if successfult, False if unsuccessful
 def main(args):
     print ("5200BAS Basic Compiler, version " + VERSION() + ".  Copyright 2001-2002 by Jeffry Johnston.")
     print ("")
@@ -118,8 +122,6 @@ def main(args):
     args.lstrip()
     args.rstrip()
 
-    # replaced STARTADDR with startAddr
-    # replaced T$ with romSize
     startAddr = "$4000"
     romSize = "32"
     if (args.find("/16 ") > -1):
@@ -155,7 +157,7 @@ def main(args):
       print ("  *    Debug output")
       print ("")
       print ("Error: No input file given")
-      exit()
+      return False
 
     # converted F$ to inFileName
     # converted F2$ to outFileName
@@ -285,7 +287,7 @@ def main(args):
                 continue
             elif (tokenType == 'V'):
                 if (tokenArray[J+1] != '='):
-                    ERROROUT("Missing = (equivalence operator)")
+                    ERROROUT("Missing = (assignment operator)")
                 lhsToken = tokenArray[J]
                 rhsToken = tokenArray[J+2]
                 if (lhsToken != rhsToken):
@@ -343,13 +345,13 @@ def main(args):
                             PRINTOUT("SEC", "")
                             J5("SBC")
                     elif (token3 == "++"):
-                        if (lhsToken != "A"): ERROROUT("Type mismatch")
+                        if (lhsToken != "A"): ERROROUT("Type mismatch (only A++ allowed)")
                         J5("ADC")
                     elif (token3 == "--"):
-                        if (lhsToken != "A"): ERROROUT("Type mismatch")
+                        if (lhsToken != "A"): ERROROUT("Type mismatch (only A-- allowed)")
                         J5("SBC")
                     elif (token3 == "*"):
-                        if (lhsToken != "A"): ERROROUT("Type mismatch")
+                        if (lhsToken != "A"): ERROROUT("Type mismatch (* operator only allowed on A)")
                         if (tokenTypes[J+4] != 'N'): ERROROUT("Type mismatch")
                         T = log(DEC(tokenArray[J+4])) / log(2)
                         T2 = 1
@@ -363,8 +365,8 @@ def main(args):
                             T2 += 1
                         J += 5
                     elif (token3 == "/"):
-                        if (lhsToken != "A"): ERROROUT("Type mismatch")
-                        if (tokenTypes[J+4] != 'N'): ERROROUT("Type mismatch")
+                        if (lhsToken != "A"): ERROROUT("Type mismatch (/ operator only allowed on A)")
+                        if (tokenTypes[J+4] != 'N'): ERROROUT("Type mismatch (denominator must be a number)")
                         T = log(DEC(tokenArray[J+4])) / log(2)
                         T2 = 1
                         while (T2 <= T):
@@ -383,9 +385,9 @@ def main(args):
                     elif (token3 == "XOR"):
                         J5("EOR")
                     else:
-                        ERROROUT("Invalid operator")
+                        ERROROUT("Invalid operator for variable " + tokenArray[J])
             elif (tokenType == 'F'):
-                ERROROUT("Illegal function call")               
+                ERROROUT("Illegal function call (function type not implmented/supported)")               
             elif (tokenType == 'C'):                    # Command
                 token = tokenArray[J]
                 if (token == "SOUND"): CMD_SOUND()
@@ -445,9 +447,9 @@ def main(args):
                 elif (token == "FOR_"): CMD_FOR(True)
                 elif (token == "NEXT"): CMD_NEXT()
                 else:
-                    ERROROUT("Unknown command")
+                    ERROROUT("Unknown command " + tokenArray[J])
             else:
-                ERROROUT("Syntax error")
+                ERROROUT("Syntax error at token " + tokenArray[J])
             #end while
 
     if (FIRSTORG):
@@ -599,8 +601,10 @@ def main(args):
     PRINTOUT("STA", "GRACTL")
     PRINTOUT("CLI", "; Enable Interrupts")
     outFile.close()             # CLOSE #2
+    
     print ("")
-    print ("Done.")
+    print ("Compilation complete.")
+    return True
 #end def main()
 
 # Convert ASCII string to ATASCII
@@ -773,7 +777,7 @@ def CMD_AUTHOR():
         # was bug here - TITLE was being tested instead of copyright
         if (len(sCOPYRIGHT) > 20): ERROROUT("AUTHOR too long (20 chars max)")
     else:
-        ERROROUT("Type mismatch")
+        ERROROUT("Type mismatch (argument must be a string)")
     J = J + 2
 #end def
 
@@ -783,24 +787,24 @@ def CMD_CASE(MINUS):
     if (token in "AXY"):
         ERROROUT("Illegal variable A/X/Y")
 
-    if (len(SELSTACK) < 1): ERROROUT("CASE outside SELECT CASE")
-    #if (SELSTACK(SELDEPTH - 1, 2) > SELSTACK(SELDEPTH - 1, 0)):
-    if (SELSTACK[2][-1] > SELSTACK[0][-1]):
-        PRINTOUT("JMP", "SC" + str(SELSTACK[0][-1]).lstrip())
-        sT2 = str(SELSTACK[2][-1]).lstrip()          # SELSTACK(SELDEPTH - 1, 2)
+    if (len(SELECTStack) < 1): ERROROUT("CASE outside SELECT CASE")
+    #if (SELECTStack(SELDEPTH - 1, 2) > SELECTStack(SELDEPTH - 1, 0)):
+    if (SELECTStack[2][-1] > SELECTStack[0][-1]):
+        PRINTOUT("JMP", "SC" + str(SELECTStack[0][-1]).lstrip())
+        sT2 = str(SELECTStack[2][-1]).lstrip()          # SELECTStack(SELDEPTH - 1, 2)
         PRINTOUT("SC" + sT2 + ":", "~")
 
     if (tokenTypes[J+1] == 'N'):
         token = "#$" + BYTE(token)
 
-    SELCOUNT += 1
-    SELSTACK[2][-1] = SELCOUNT                # SELSTACK(SELDEPTH - 1, 2)
+    SELECTCount += 1
+    SELECTStack[2][-1] = SELECTCount                # SELECTStack(SELDEPTH - 1, 2)
 
     if (token != "ELSE"):
-        index = SELSTACK[1][-1]               # SELSTACK(SELDEPTH - 1, 1)
+        index = SELECTStack[1][-1]               # SELECTStack(SELDEPTH - 1, 1)
         sT2 = {"CMP", "CPX", "CPY"}[index]
         PRINTOUT(sT2, token + COMMENT(2))
-        token = str(SELCOUNT).lstrip()
+        token = str(SELECTCount).lstrip()
 
         if (not MINUS):
             PRINTOUT("BNE", "SC" + token)
@@ -813,7 +817,7 @@ def CMD_CASE(MINUS):
 
 def CMD_CHARSET():
     global J, tokenTypes, tokenArray
-    if (tokenTypes[J+1] != 'N'): ERROROUT("Type mismatch")
+    if (tokenTypes[J+1] != 'N'): ERROROUT("Type mismatch (argument must be an address)")
     PRINTOUT("LDA", "#$" + tokenArray[J+1][0:2] + COMMENT(2))
     PRINTOUT("STA", "CHBASE")
     # TODO - reset charset option so ATASCII.INC not included?
@@ -828,6 +832,7 @@ def CMD_CLS():
     J = J + 1
 #end def
 
+# NB: DATA does not work as you expect  (if at all)
 def CMD_DATA():
     global J, tokenTypes, tokenArray
     if (tokenTypes[J+2:J+18] != "N,N,N,N,N,N,N,N"): ERROROUT("Invalid data")
@@ -846,16 +851,15 @@ def CMD_DATA():
 
 def CMD_DEFINE():
     global J, tokenTypes, tokenArray
-    if (tokenTypes[J+1:J+4] != "V,N"): ERROROUT("Type mismatch")
-    if (tokenArray[J+1] in "AXY"):
-        ERROROUT("Invalid variable")
-    else:
-        if (tokenArray[J+3][0:2] == "00"):
-            token = tokenArray[J+3][2:4]
-        else:
-            token = tokenArray[J+3]
-        PRINTOUT(tokenArray[J+1].ljust(8) + ".EQU    $" + token, "~")
+    if (tokenTypes[J+1] != "V"): ERROROUT("Type mismatch (first arg must be a variable name)")
+    if (tokenTypes[J+3] != "N"): ERROROUT("Type mismatch (2nd arg must be an address)")
+    if (tokenArray[J+1] in "AXY"): ERROROUT("Invalid variable (cannot DEFINE A, X, or Y)")
 
+    if (tokenArray[J+3][0:2] == "00"):
+        token = tokenArray[J+3][2:4]
+    else:
+        token = tokenArray[J+3]
+    PRINTOUT(tokenArray[J+1].ljust(8) + ".EQU    $" + token, "~")
     J += 4
 #end def
 
@@ -890,11 +894,11 @@ def CMD_DLIST():
 #end def
 
 def CMD_DO(MINUS):
-    global J, tokenTypes, tokenArray, DOCOUNT, DOSTACK
-    DOCOUNT += 1
-    #DOSTACK[DODEPTH] = DOCOUNT; DODEPTH = DODEPTH + 1
-    DOSTACK.append(DOCOUNT)
-    sT = str(DOCOUNT).lstrip()
+    global J, tokenTypes, tokenArray, DOCount, DOStack
+    DOCount += 1
+    #DOStack[DODEPTH] = DOCount; DODEPTH = DODEPTH + 1
+    DOStack.append(DOCount)
+    sT = str(DOCount).lstrip()
     nextToken = ""
     if (J < len(tokenArray) - 1):
         nextToken = tokenArray[J+1]
@@ -919,40 +923,40 @@ def CMD_DOWN():
 #end def
 
 def CMD_ELSE():
-    global J, IFSTACK, IFCOUNT
+    global J, IFStack, IFCount
     #if (IFDEPTH < 1): ERROROUT("ELSE without IF")
-    #sT = IFSTACK[IFDEPTH - 1].tostring().lstrip()
-    #IFCOUNT += 1
-    #IFSTACK[IFDEPTH - 1] = IFCOUNT
-    if (len(IFSTACK) < 1): ERROROUT("ELSE without IF")
-    sT = str(IFSTACK[-1]).lstrip()      # last element in list/stack
-    IFCOUNT += 1
-    IFSTACK[-1] = IFCOUNT
-    PRINTOUT("JMP", "IF" + str(IFCOUNT).lstrip() + COMMENT(1))
+    #sT = IFStack[IFDEPTH - 1].tostring().lstrip()
+    #IFCount += 1
+    #IFStack[IFDEPTH - 1] = IFCount
+    if (len(IFStack) < 1): ERROROUT("ELSE without IF")
+    sT = str(IFStack[-1]).lstrip()      # last element in list/stack
+    IFCount += 1
+    IFStack[-1] = IFCount
+    PRINTOUT("JMP", "IF" + str(IFCount).lstrip() + COMMENT(1))
     PRINTOUT("IF" + sT + ":", "~")
     J = J + 1
 #end def
 
 def CMD_END():
-    global J, tokenTypes, tokenArray, IFSTACK, SELSTACK
+    global J, tokenTypes, tokenArray, IFStack, SELECTStack
     nextToken = tokenArray[J+1]
     if (nextToken == "IF"):
-        if (len(IFSTACK) < 1): ERROROUT("END IF without IF")
+        if (len(IFStack) < 1): ERROROUT("END IF without IF")
         #IFDEPTH = IFDEPTH - 1
-        #PRINTOUT("IF" + IFSTACK[IFDEPTH].tostring().lstrip() + ":", "~" + COMMENT(2))
-        n = IFSTACK[-1]
-        IFSTACK.pop()
+        #PRINTOUT("IF" + IFStack[IFDEPTH].tostring().lstrip() + ":", "~" + COMMENT(2))
+        n = IFStack[-1]
+        IFStack.pop()
         PRINTOUT("IF" + str(n).lstrip() + ":", "~" + COMMENT(2))
         J = J + 2
     elif (nextToken == "SELECT"):
-        if (len(SELSTACK) < 1): ERROROUT ("END SELECT without SELECT CASE")
+        if (len(SELECTStack) < 1): ERROROUT ("END SELECT without SELECT CASE")
         #SELDEPTH = SELDEPTH - 1
-        #if (SELSTACK(SELDEPTH, 2) > SELSTACK(SELDEPTH, 0)):
-        #    sT2 = SELSTACK(SELDEPTH, 2).tostring().lstrip()
+        #if (SELECTStack(SELDEPTH, 2) > SELECTStack(SELDEPTH, 0)):
+        #    sT2 = SELECTStack(SELDEPTH, 2).tostring().lstrip()
         #    PRINTOUT("SC" + sT2 + ":", "~")
-        #sT2 = SELSTACK(SELDEPTH, 0).tostring().lstrip()
-        n2 = SELSTACK[2].pop()
-        n0 = SELSTACK[0].pop()
+        #sT2 = SELECTStack(SELDEPTH, 0).tostring().lstrip()
+        n2 = SELECTStack[2].pop()
+        n0 = SELECTStack[0].pop()
         if (n2 > n0):
             sT2 = str(n2).lstrip()
             PRINTOUT("SC" + sT2 + ":", "~")
@@ -970,16 +974,16 @@ def CMD_EXIT():
     global J, tokenArray
     nextToken = tokenArray[J+1]
     if (nextToken == "DO"):
-        if (len(DOSTACK) < 1): ERROROUT("EXIT DO outside DO..LOOP")
-        PRINTOUT("JMP", "ED" + str(DOSTACK[-1]).lstrip() + COMMENT(2))
+        if (len(DOStack) < 1): ERROROUT("EXIT DO outside DO..LOOP")
+        PRINTOUT("JMP", "ED" + str(DOStack[-1]).lstrip() + COMMENT(2))
     if (nextToken == "FOR"):
-        if (len(FORSTACK) < 1): ERROROUT("EXIT FOR outside FOR..NEXT")
-        PRINTOUT("JMP", "EF" + str(FORSTACK[-1]).lstrip() + COMMENT(2))
+        if (len(FORStack) < 1): ERROROUT("EXIT FOR outside FOR..NEXT")
+        PRINTOUT("JMP", "EF" + str(FORStack[-1]).lstrip() + COMMENT(2))
     if (nextToken == "SUB"):
         PRINTOUT("RTI", COMMENT(2))
     if (nextToken == "SELECT"):
-        if (len(SELSTACK) < 1): ERROROUT ("EXIT SELECT outside SELECT CASE")
-        PRINTOUT("JMP", "SC" + str(SELSTACK[0][-1]).lstrip() + COMMENT(2))
+        if (len(SELECTStack) < 1): ERROROUT ("EXIT SELECT outside SELECT CASE")
+        PRINTOUT("JMP", "SC" + str(SELECTStack[0][-1]).lstrip() + COMMENT(2))
     else:
         ERROROUT("Syntax error")
 
@@ -987,13 +991,13 @@ def CMD_EXIT():
 #end def
 
 def CMD_FOR(MINUS):
-    global J, tokenTypes, tokenArray, FORCOUNT, FORSTACK
+    global J, tokenTypes, tokenArray, FORCount, FORStack
     if (tokenTypes[J+1] != 'V'): ERROROUT("Type mismatch")
     if (tokenArray[J+2] != "TO"): ERROROUT("Syntax Error")
     if (tokenArray[J+1] in "AXY"): ERROROUT("Illegal variable A/X/Y")
-    FORCOUNT += 1
-    FORSTACK.append(FORCOUNT)
-    sT = str(FORCOUNT).lstrip()
+    FORCount += 1
+    FORStack.append(FORCount)
+    sT = str(FORCount).lstrip()
     PRINTOUT("FR" + sT + ":", "~" + COMMENT(4))
     J = J + 3
     LDX("A")
@@ -1088,7 +1092,7 @@ def CMD_IF(MINUS):
 #'IF A = 0 AND  Y = 1 THEN
 #'----------------------------------------------------------------------------
     global J, tokenTypes, tokenArray
-    global IFSTACK, IFCOUNT, DOSTACK, FORSTACK, SELSTACK
+    global IFStack, IFCount, DOStack, FORStack, SELECTStack
     T2 = 4 + J
     while (T2 < len(tokenTypes) - 1):
         if (tokenTypes[T2] == "E"): ERROROUT("IF without THEN")
@@ -1097,15 +1101,15 @@ def CMD_IF(MINUS):
     # wend
     
     if (T2 < len(tokenTypes) - 1 and tokenTypes[T2+1] in "E:"):  # multiline IF...END IF
-        IFCOUNT = IFCOUNT + 1
-        IFSTACK.append(IFCOUNT)
+        IFCount = IFCount + 1
+        IFStack.append(IFCount)
         T = J + 1
         P = -1
         # TODO - Better loop check here (T < len(tokenTypes) - 2)
         while (True):
             if (tokenTypes[T:T+2] != "VO"): ERROROUT("Syntax error")
             P = P + 1
-            if (P > 0): PRINTOUT("IF" + str(IFCOUNT) + "P" + str(P) + ":", "~")
+            if (P > 0): PRINTOUT("IF" + str(IFCount) + "P" + str(P) + ":", "~")
             token = tokenArray[T+3]
             if (token == "AND"):
                 T2 = T + 7
@@ -1124,9 +1128,9 @@ def CMD_IF(MINUS):
                     P2 = P2 + 1
                 # wend
                 if (P2 == 0):
-                    BRANCH(MINUS, tokenArray[T], INVERTSIGN(tokenArray[T+1]), tokenArray[T+2], "IF" + str(IFCOUNT), tokenTypes[T+2], COMMENT(4))
+                    BRANCH(MINUS, tokenArray[T], INVERTSIGN(tokenArray[T+1]), tokenArray[T+2], "IF" + str(IFCount), tokenTypes[T+2], COMMENT(4))
                 else:
-                    BRANCH(FALSE, tokenArray[T], INVERTSIGN(tokenArray[T+1]), tokenArray[T+2], "IF" + str(IFCOUNT) + "P" + str(P2), tokenTypes[T+2], COMMENT(4))
+                    BRANCH(FALSE, tokenArray[T], INVERTSIGN(tokenArray[T+1]), tokenArray[T+2], "IF" + str(IFCount) + "P" + str(P2), tokenTypes[T+2], COMMENT(4))
             elif (token == "OR"):
                 T2 = T + 7
                 P2 = P + 1
@@ -1140,15 +1144,15 @@ def CMD_IF(MINUS):
                     T2 = T2 + 4
                     P2 = P2 + 1
                 # wend
-                BRANCH(False, tokenArray[T], tokenArray[T+1], tokenArray[T+2], "IF" + str(IFCOUNT) + "P" + str(P2), tokenTypes[T+2], COMMENT(4))
+                BRANCH(False, tokenArray[T], tokenArray[T+1], tokenArray[T+2], "IF" + str(IFCount) + "P" + str(P2), tokenTypes[T+2], COMMENT(4))
             elif (token == "THEN"):
-                BRANCH(MINUS, tokenArray[T], INVERTSIGN(tokenArray[T+1]), tokenArray[T+2], "IF" + str(IFCOUNT), tokenTypes[T+2], COMMENT(5))
+                BRANCH(MINUS, tokenArray[T], INVERTSIGN(tokenArray[T+1]), tokenArray[T+2], "IF" + str(IFCount), tokenTypes[T+2], COMMENT(5))
                 P = P + 1
-                PRINTOUT("IF" + str(IFCOUNT) + "P" + str(P) + ":", "~")
+                PRINTOUT("IF" + str(IFCount) + "P" + str(P) + ":", "~")
                 J = J + 4
                 break           #EXIT DO
             else:
-                ERROROUT("Syntax error")
+                ERROROUT("Syntax error (token = " + token + ")")
             #END SELECT
             T = T + 4
             J = J + 4
@@ -1157,22 +1161,22 @@ def CMD_IF(MINUS):
     else:       #'single line IF...GOTO or IF..EXIT
         if (tokenTypes[J+1:J+3] != "VO"): ERROROUT("Syntax error")
         if (tokenArray[J+5] == "GOTO"):
-            if (tokenTypes[J+6] != "V"): ERROROUT("Missing label")
+            if (tokenTypes[J+6] != "V"): ERROROUT("Missing label for GOTO")
         elif (tokenArray[J+5] == "EXIT"):
             token = tokenArray[J+6]
             if (token == "DO"):
-                if (len(DOSTACK) < 1): ERROROUT("EXIT DO outside DO..LOOP")
-                tokenArray[J+6] = "ED" + str(DOSTACK[-1])
+                if (len(DOStack) < 1): ERROROUT("EXIT DO outside DO..LOOP")
+                tokenArray[J+6] = "ED" + str(DOStack[-1])
             elif (token == "FOR"):
-                if (len(FORSTACK) < 1): ERROROUT("EXIT FOR outside FOR..NEXT")
-                tokenArray[J+6] = "EF" + str(FORSTACK[-1])
+                if (len(FORStack) < 1): ERROROUT("EXIT FOR outside FOR..NEXT")
+                tokenArray[J+6] = "EF" + str(FORStack[-1])
             elif (token == "SELECT"):
-                if (len(SELSTACK) < 1): ERROROUT ("EXIT SELECT outside SELECT CASE")
-                tokenArray[J+6] = "SC" + str(SELSTACK[0][-1])
+                if (len(SELECTStack) < 1): ERROROUT ("EXIT SELECT outside SELECT CASE")
+                tokenArray[J+6] = "SC" + str(SELECTStack[0][-1])
             else:
-                ERROROUT("Syntax error")
+                ERROROUT("Syntax error - EXIT without DO/FOR/SELECT")
         else:
-            ERROROUT("Syntax error")
+            ERROROUT("Syntax error - single line IF must have GOTO or EXIT")
 
         BRANCH(MINUS, tokenArray[J+1], tokenArray[J+2], tokenArray[J+3], tokenArray[J+6], tokenTypes[J+3], COMMENT(7))
         J = J + 7
@@ -1180,7 +1184,7 @@ def CMD_IF(MINUS):
 
 def CMD_INPUT():
     global J, tokenTypes
-    if (tokenTypes[J+1] != 'V'): ERROROUT("Type mismatch")
+    if (tokenTypes[J+1] != 'V'): ERROROUT("Type mismatch - argument must be a variable")
     includeArray[4] = True           # MID$(INCLUDE$, 5, 1) = "*"
     PRINTOUT("JSR", "INPUT" + COMMENT(2))
     J = J + 1
@@ -1245,9 +1249,9 @@ def CMD_LOCATE():
 #end def
 
 def CMD_LOOP(MINUS):
-    global J, tokenArray, DOSTACK
-    if (len(DOSTACK) < 1): ERROROUT("LOOP without DO")
-    sT = str(DOSTACK.pop()).lstrip()
+    global J, tokenArray, DOStack
+    if (len(DOStack) < 1): ERROROUT("LOOP without DO")
+    sT = str(DOStack.pop()).lstrip()
     nextToken = ""
     if (J < len(tokenArray) - 1):
         nextToken = tokenArray[J+1] 
@@ -1267,7 +1271,7 @@ def CMD_LOOP(MINUS):
 def CMD_MEMAREA():
     global J, tokenTypes, tokenArray
     #IF MID$(Q$, J + 2, 9) <> "N,N,N,N,N" THEN CALL ERROROUT("Illegal function call")
-    if (tokenTypes[J+1:J+10] != "N,N,N,N,N"): ERROROUT("Illegal function call")
+    if (tokenTypes[J+1:J+10] != "N,N,N,N,N"): ERROROUT("Illegal function call (5 numbers required)")
     includeArray[15] = True            # MID$(INCLUDE$, 16, 1) = "*"
     tokenArray[J + 5] = HEX4(DEC(tokenArray[J + 5]) - 1)
     PRINTOUT("LDA", "#$" + tokenArray[J+1][0:2] + COMMENT(10))
@@ -1292,7 +1296,7 @@ def CMD_MEMAREA():
 
 def CMD_MEMCOPY():
     global J, tokenTypes, tokenArray, includeArray
-    if (tokenTypes[J+1:J+6] != "N,N,N"): ERROROUT("Illegal function call")
+    if (tokenTypes[J+1:J+6] != "N,N,N"): ERROROUT("Illegal function call (3 numbers required)")
     includeArray[14] = True          # MID$(INCLUDE$, 15, 1) = "*"
     tokenArray[J + 5] = HEX4(DEC(tokenArray[J + 5]) - 1)
     PRINTOUT("LDA", "#$" + tokenArray[J+1][0:2] + COMMENT(6))
@@ -1311,6 +1315,7 @@ def CMD_MEMCOPY():
     J = J + 6
 #end def
 
+# TODO - What about other bits in GRACTL?
 def CMD_MISSILES():
     global J, tokenArray
     if (tokenArray[J+1] == "ON"):
@@ -1318,7 +1323,7 @@ def CMD_MISSILES():
     elif (tokenArray[J+1] == "OFF"):
         PRINTOUT("LDA", "#$02" + COMMENT(2))
     else:
-        ERROROUT("Syntax error")
+        ERROROUT("Syntax error (argument must be ON or OFF)")
 
     PRINTOUT("STA", "GRACTL")
     J = J + 2
@@ -1343,26 +1348,27 @@ def CMD_MULADD():
 #end def
 
 def CMD_NEXT():
-    global J, tokenTypes, tokenArray, FORCOUNT, FORSTACK
-    if (len(FORSTACK) < 1): ERROROUT("NEXT without FOR")
-    if (tokenTypes[J+1] != 'V'): ERROROUT("Missing variable")
+    global J, tokenTypes, tokenArray, FORCount, FORStack
+    if (len(FORStack) < 1): ERROROUT("NEXT without FOR")
+    if (tokenTypes[J+1] != 'V'): ERROROUT("Missing variable name")
     if (tokenArray[J+1] in "AXY"):                  # CASE "A", "X", "Y"
         ERROROUT("Illegal variable A/X/Y")
     PRINTOUT("INC", tokenArray[J+1] + COMMENT(2))
-    n = FORSTACK.pop()
+    n = FORStack.pop()
     PRINTOUT("JMP", "FR" + str(n).lstrip())
     PRINTOUT("EF" + str(n).lstrip() + ":", "~")
     J = J + 2
 #end def
 
+# TODO - Command "SETPFCOLOURS n, n, n, n", SETBGCOLOUR n and SETPMCOLOURS n
 def CMD_PALETTE():
     global J, tokenTypes, tokenArray
     if (tokenTypes[J+1] != 'N'): ERROROUT("Illegal function call")
     T = DEC(tokenArray[J+1])
-    if (T < 0 or T > 8): ERROROUT("Illegal function call")
+    if (T < 0 or T > 8): ERROROUT("Illegal function call (colour index mus be in range 0 to 8)")
     colRegs = [ "COLOR4", "COLOR0", "COLOR1", "COLOR2", "COLOR3", "PCOLR0", "PCOLR1", "PCOLR2", "PCOLR3" ]
     sT = colRegs[T]
-    J = J + 3; LDX("A"); J = J - 3
+    J = J + 3; LDX("A"); J = J - 3				# Set A reg to arg 2
     PRINTOUT("STA", sT + COMMENT(4))
     J = J + 4
 #end def
@@ -1421,7 +1427,7 @@ def CMD_POP():
     elif (nextToken == "A"):
         PRINTOUT("PLA", COMMENT(2))
     else:
-        ERROROUT("Syntax error")
+        ERROROUT("Syntax error - argument must be A or ALL")
 
     J = J + 2
 #end def
@@ -1476,12 +1482,14 @@ def CMD_PUSH():
     elif (nextToken == "A"):
         PRINTOUT("PHA", COMMENT(2))
     else:
-        ERROROUT("Syntax error")
+        ERROROUT("Syntax error - argument must be A or ALL")
 
     J = J + 2
 #end def
 
 # PUTSPRITE
+# PUT ( <x-coord>,<y-coord> ), <label>, <num>, <height>
+# TODO - Remove the brackets (unneccessary)
 def CMD_PUT():
     #'PUT ( 2 , 4 ) , 7 , 9 , 11
     global J, tokenTypes, tokenArray
@@ -1632,13 +1640,13 @@ def CMD_SCREEN():
 
 def CMD_SELECT():
     global J, tokenArray
-    if (tokenArray[J+1] != "CASE"): ERROROUT("Syntax error")
+    if (tokenArray[J+1] != "CASE"): ERROROUT("Syntax error - CASE expected after SELECT")
     T = "AXY".find(tokenArray[J+2])
     if (T == -1): ERROROUT("A/X/Y expected")
-    SELCOUNT = SELCOUNT + 1
-    SELSTACK[0].append(SELCOUNT)
-    SELSTACK[2].append(SELCOUNT)
-    SELSTACK[1].append(T)
+    SELECTCount = SELECTCount + 1
+    SELECTStack[0].append(SELECTCount)
+    SELECTStack[2].append(SELECTCount)
+    SELECTStack[1].append(T)
     PRINTOUT("", COMMENT(3))
     J = J + 3
 #end def
@@ -1663,8 +1671,8 @@ def CMD_SET():
     # SET option=location [label]
     global J, tokenTypes, tokenArray
     option = tokenArray[J+1]
-    if (not option in DEFAULTOPTIONS): ERROROUT("Syntax error")
-    if (tokenTypes[J+2:J+4] != "ON"): ERROROUT("Syntax error")
+    if (not option in DEFAULTOPTIONS): ERROROUT("Syntax error - SET option name not recognised")
+    if (tokenTypes[J+2:J+4] != "ON"): ERROROUT("Syntax error - '=' and address expected")
     DEFAULTOPTIONS[option] = tokenArray[J+3]
     if (tokenTypes[J+4] == "V"):
         OVERRIDEOPTIONS[option] = tokenArray[J+4]           # set override option to label
@@ -1672,13 +1680,14 @@ def CMD_SET():
     J= J + 4
 #end def
 
+# TODO : SOUNDMIDI - PLay midi note number
 def CMD_SOUND():
     #       1         2 3
     # SOUND CHANNEL(N), FREQUENCY(N/V)
     global J, tokenTypes, tokenArray
     if (tokenTypes[J+1] + tokenArray[J+2] != "N,"): ERROROUT("Syntax error")
     T = DEC(tokenArray[J+1])
-    if (T > 3): ERROROUT("Out of range")
+    if (T > 3): ERROROUT("Out of range (channel number must be in range 0 to 3)")
     sT = str(chr(T + 49))            # 'channel
     J = J + 3; LDX("A"); J = J - 3
     PRINTOUT("STA", "AUDF" + sT + COMMENT(8))
@@ -1692,7 +1701,7 @@ def CMD_SPRITES():
     elif (tokenArray[J+1] == "OFF"):
         PRINTOUT("LDA", "#$22" + COMMENT(2))
     else:
-        ERROROUT("Syntax error")
+        ERROROUT("Syntax error - argument must be ON or OFF")
 
     PRINTOUT("STA", "SDMCTL")
     J = J + 2
@@ -1717,12 +1726,14 @@ def CMD_SPRITES():
 #    J = J + 2
 ##end def
 
+# Subroutine to be called on VBI/DLI/IRQ
+# Must have a matching SET (eg: SET VDSLST=$BC00 mySubName )
 def CMD_SUB():
     global J, tokenTypes, tokenArray
-    if (tokenTypes[J+1] != 'V'): ERROROUT("Syntax error")
+    if (tokenTypes[J+1] != 'V'): ERROROUT("Syntax error - label expected")
     subName = tokenArray[J+1]
     if (not subName in OVERRIDEOPTIONS):
-        ERROROUT("SUB undefined (but has been SET)")
+        ERROROUT("SUB label has not been SET)")
     PRINTOUT(".ORG    $" + DEFAULTOPTIONS[subName], "~")
     PRINTOUT(";-----------------------------------------------------------", "~")
     PRINTOUT("; SUB " + subName, "~")
@@ -1739,7 +1750,7 @@ def CMD_TITLE():
     elif (tokenTypes[J+1] == 'V'):
         if (tokenArray[J+1] == "OFF"): TITLE = False
     else:
-        ERROROUT("Type mismatch")
+        ERROROUT("Type mismatch - argument must be a string or OFF")
 
     J = J + 2
 #end def
@@ -1751,7 +1762,7 @@ def CMD_UP():
 #end def
 
 def CMD_VOLUME():
-    # TODO : finx commenting (says "SOUND")
+    # TODO : fix commenting (says "SOUND")
     #'      1         2 3         4 5
     #'SOUND CHANNEL(N), NOISE(N/V), VOLUME(N/V)
     global J, tokenTypes, tokenArray
@@ -1792,7 +1803,7 @@ def CMD_VOLUME():
         PRINTOUT("CLC", "")
         PRINTOUT("ADC", sT2)
     else:
-        ERROROUT("Type mismatch")
+        ERROROUT("Type mismatch (invalid argument types)")
 
     PRINTOUT("STA", "AUDC" + sT)
     J = J + 6
@@ -1810,13 +1821,15 @@ def COMMENT(N):
 #end def
 
 def CONSCOLOR(colour):
+		# Note: these are ANSI escape codes
+		# "\033[1;32;40m
     global useANSIDebugColours
     if (useANSIDebugColours):
         sT = "0"
         if (colour > 7):
             colour = colour - 8
             sT = "1"
-        print ("[" + sT + ";3" + "04261537"[colour] + "m")
+        print ("\033[" + "1" + ";3" + "04261537"[colour] + "m")
 #end def
 
 def DEC(s):
@@ -1824,11 +1837,10 @@ def DEC(s):
 #end def
 
 def ERROROUT(s):
-    # A$ was some kind of global
     global LINENUM, gCurrentParseLine
     print("")
-    print(s + " on line " + str(LINENUM) + ":")
-    print("[" + str(LINENUM).lstrip() + "] " + gCurrentParseLine)          #A$)
+    print("Error on line " + str(LINENUM) + ": " + s)
+    print("[" + str(LINENUM).lstrip() + "] " + gCurrentParseLine)
     exit()          # explode into little pieces
 #end def
 
@@ -1856,9 +1868,9 @@ def FCN_JOYTRIG():
     #'PRINTOUT("AND", "#$F7")
     #'J = J + 3
 
-    if (tokenTypes[J+3] != 'N'): ERROROUT("Type mismatch")
+    if (tokenTypes[J+3] != 'N'): ERROROUT("Type mismatch - JOYTRIG() argument must be a number")
     T = DEC(tokenArray[J+3])
-    if (T < 0 or T > 3): ERROROUT("Illegal function call")
+    if (T < 0 or T > 3): ERROROUT("Illegal function call - JOYTRIG() argument must in range 0 to 3")
     PRINTOUT(sT2, "TRIG" + str(T).lstrip() + COMMENT(5))  # 'T * 2 ???
     J = J + 5
 #end def
@@ -1877,7 +1889,7 @@ def FCN_JOYX():
     sT2 = "LD" + tokenArray[J]
     if (tokenTypes[J+3:J+5] != "N)"): ERROROUT("Type mismatch")
     T = DEC(tokenArray[J+3])
-    if (T < 0 or T > 3): ERROROUT("Illegal function call")
+    if (T < 0 or T > 3): ERROROUT("Illegal function call - JOYX() argument must in range 0 to 3")
     PRINTOUT(sT2, "PADDL" + str(T * 2).lstrip() + COMMENT(5))
     J = J + 5
 #end def
@@ -1888,7 +1900,7 @@ def FCN_JOYY():
     sT2 = "LD" + tokenArray[J]
     if (tokenTypes[J+3:J+5] != "N)"): ERROROUT("Type mismatch")
     T = DEC(tokenArray[J+3])
-    if (T < 0 or T > 3): ERROROUT("Illegal function call")
+    if (T < 0 or T > 3): ERROROUT("Illegal function call - JOYY() argument must in range 0 to 3")
     PRINTOUT(sT2, "PADDL" + str(T * 2 + 1).lstrip() + COMMENT(5))
     J = J + 5
 #end def
@@ -1912,7 +1924,7 @@ def FCN_PEEK():
         else:
             sT = tokenArray[J+3]
     else:
-        ERROROUT("Type mismatch")
+        ERROROUT("Type mismatch - PEEK argument must be a number or a variable")
 
     args = ""
     if (J + 6 < len(tokenArray)):
@@ -1940,6 +1952,7 @@ def FCN_PEEK():
 
 #end def
 
+# Read a character from the screen (assumes 40-char wide screen?)
 def FCN_SCREEN():
     global J, tokenTypes, tokenArray
     if (not tokenArray[J].findOneOf("AXY")):
@@ -2081,7 +2094,7 @@ def LDX(reg):
             else:
                 PRINTOUT("LD" + reg, token + ";" + reg + " = " + token)
 #end def
-            
+
 # Parse an input line
 # Updates tokenArray
 # returns a string of the tokenTypes used on this line
@@ -2468,7 +2481,15 @@ args = ""
 for s in sys.argv[1:]:
     args = args + s + ' ' 
 
-#main(args)
-main("/D hello.bas")
+result = main("/D hello.bas")
+
+# If successfult, then run TASM/DASM on the output
+if (result && len(errorString) == 0)
+	# Run the compiled asm output thru the assembler
+	cmdline = "tasm hello.asm -f3 -ohello.bin"
+	if (useDASM)
+		cmdline = "dasm hello.asm -f3 -ohello.bin"
+	p = subprocess.Popen(cmdline, shell=True)
+
 exit()
 
