@@ -2,6 +2,7 @@
 ' Originally written for DASM by Daniel Boris (dboris@comcast.net)
 ' 5200BAS version by James Higgs 2016
 ' Compile with 5200BAS
+' Note: DLI routine removed to make it noob-friendly
 
 TITLE OFF
 
@@ -9,33 +10,10 @@ TITLE OFF
 DEFINE line, $20								' Current DLI line
 DEFINE pm0pos, $21							' Current pos of P0
 
-'************* Copy custom display list to RAM *******************'
-MEMCOPY dlist,$1000,$21
+SCREEN 4
+CLS
+PRINT "PLAYER/MISSILE EXAMPLE"
 
-
-';************ Setup IRQ vectors *********************
-'
-'        lda     #$03            ;point IRQ vector
-'        sta     $200            ;to BIOS routine
-'        lda     #$FC
-'        sta     $201
-'        lda     #$B8            ;point VBI vector
-'        sta     $202            ;to BIOS routine
-'        lda     #$FC
-'        sta     $203
-'        lda     #$B2            ;point Deferred VBI
-'        sta     $204            ;to BIOS routine
-'        lda     #$FC
-'        sta     $205
-'        lda     #$00            ;point DLI vector
-'        sta     $206            ;to custom routine
-'        lda     #$50
-'        sta     $207
-'        lda     #$00
-'        sta     line
-
-SET VDSLST=$5000			' TODO FIX
-       
 ';************* Setup hardware registers *************
 '
 '        lda     #$22            ;Set color PF0
@@ -60,7 +38,6 @@ SET VDSLST=$5000			' TODO FIX
 PALETTE $01, $22
 PALETTE $02, $0F
 PALETTE $03, $84
-SET DLIST=$1000
 CHARSET $F800
 POKE sDMACTL,$22								' Enable display list DMA, and normal background
 POKE NMIEN,$C0									' Enable NMI + DLI
@@ -221,23 +198,6 @@ RETURN
 '        pla             ;Restore A
 '        rti             ;Done
 
-.ORG		$5000
-dli:
-        PHA             ;Save A
-        INC line        ;Increment the line counter
-        LDA line        ;Past the fifth DLI?
-        CMP #$05
-        BNE done        ;If not then exit DLI
-        LDA pm0pos      ;Get player 0 position
-        EOR #$FF        ;Invert it
-        STA HPOSP0      ;Set player 0 position
-        LDA #$0F        ;Change player color
-        STA COLPM0      ;
-        ; Note: Player color is changed in hardware register not the shadow
-        ; register so it takes effect immediatly. 
-done:
-        PLA             ;Restore A
-        RTI             ;Done
 
 '************* Display list data ****************************
 .ORG    $b000

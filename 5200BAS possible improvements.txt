@@ -12,6 +12,14 @@
 
 Too much "pointer" stuff. Should be made easy for beginners (not have to worry about where the sprite data is, or where the display list is, etc). Use "DATA SPRITE" or "DEFINE SPRITE(n)" and have the pointer/address stuff done automatically.
 
+Make sprites easier to work with:
+	- DEFSPRITE n, label, size
+	- PUTSPRITE n, x, y
+
+Add VSCROLL <0...15> command (updates the display list)
+Add HSCROLL <0...15> command (updates the HSCROL register)
+
+
 ATTRACT should be RESETATTRACT
 
 CHARSET should be deprecated tp SET CHARSET

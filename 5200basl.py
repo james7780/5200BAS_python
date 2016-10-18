@@ -34,8 +34,9 @@ def VERSION():
 # 0200-021B      reserved (shadows)
 # 021C-3FFF      free
 # 4000-BFFF      ROM
-# 4000-xxFF      sprites
-# xx00-xxFF      character sets
+# 4000-BFFF      sprite data (page aligned)
+# 4000-BFFF      character set (page aligned)
+# 4000-BFFF      playfield/background data (page-aligned)
 # xx00-xxxx      code & DLI's
 # xxxx-xxxx      display lists
 # xxxx-BFE6      keypad IRQ
@@ -53,9 +54,9 @@ tokenArray = { }
 tokenTypes = ""             # NB: tokenTypes index = Q$ index - 1!
 DOStack = []                # list as stack (use append() and pop())
 FORStack = []
-SELECTStack = []               # 2-dimensional array
+SELECTStack = []            # 2-dimensional array
 IFStack = []
-numOPTIONS = 20             # 19 in QBX
+
 # 2-dimensional array
 # note: strings address option "B000" changed to "BB00"
 #sOPTIONS = [ ["FC03","FCB8","BC20","FEA1","FD02","BC00","0000",
@@ -81,7 +82,7 @@ DEFAULTOPTIONS = dict( VIMIRQ = "FC03",
                         SPRITES = "3000",
                         CHARSET = "B800",
                         STRINGS = "BB00",
-                        DLIST = "BFB4",
+                        DLIST = "BF00",							# was BFB4
                         VECTTBL = "BD00" )
 # Ordered list of option names (as dictionary above can become unordered)
 OPTIONNAMELIST = [ "VIMIRQ", "VVBLKI", "VVBLKD", "VDSLST", "VKYBDI", "VKYBDF", "VTRIGR",
@@ -92,13 +93,15 @@ OPTIONNAMELIST = [ "VIMIRQ", "VVBLKI", "VVBLKD", "VDSLST", "VKYBDI", "VKYBDF", "
 OVERRIDEOPTIONS = dict()
 
 J = -1              # token index
-LINENUM = 0         # output line number
+sourceLineNumber = 0         # output line number
 DOCount = 0 ; FORCount = 0 ; SELECTCount = 0; IFCount = 0
 # DODEPTH/FORDEPTH/SELDEPTH replaced by len(stack/list)
-SCRMODE = 2         # ANTIC screen mode
-SCRHGT = 24         # Number of visible mode lines in the display list 
+SCRMODE = 2         # ANTIC screen mode (text mode 2 by default)
+SCRHGT = 24         # Number of visible mode lines in the display list
+SCRPITCH = 40				# Screen "pitch" (number of bytes per line)
+# TODO - Replace SCRMODE/SCRHGT/SCRPITCH with ScreenParams dict
+ScreenParams = {'mode': 2, 'height': 24, 'pitch': 40}
 TITLE = True        # Show title when booting
-SPRRES = 0          # Sprite resolution
 stringData = ""     # Strings data, written to STRINGS section
 charData = ""       # Char data, never used?
 spriteData = ""     # Set when reading sprite data, never used?
@@ -111,6 +114,8 @@ useDASM = True
 useANSIDebugColours = False                 # not supported in Python IDE's?
 errorString = ""														# compilation error string
 
+
+# ****************************************************************************
 # Main function (to allow forward declarations)
 # @param args			concatenated arguments
 # @return 				True if successfult, False if unsuccessful
@@ -234,12 +239,12 @@ def main(args):
     FIRSTORG = True
     
     # Main file parsing loop
-    global J, tokenTypes, tokenArray, LINENUM
+    global J, tokenTypes, tokenArray, sourceLineNumber
     for line in inFile:
         s = line.rstrip(" \n")
         s = s.lstrip();
         #s += " "
-        LINENUM += 1
+        sourceLineNumber += 1
         if (len(s) < 2):        # handle empty lines
             J = -1
             continue
@@ -484,6 +489,8 @@ def main(args):
     #'END IF
 
     # "Default" display list
+    # Set up the default display list according to SCRMODE
+    # SCRHGT should also have been set to the number of mode lines
     if (not 'DLIST' in OVERRIDEOPTIONS):
         PRINTOUT("", "~")
         PRINTOUT(";-----------------------------------------------------------", "~")
@@ -1223,11 +1230,12 @@ def CMD_LEFT():
     J = J + 1
 #end def
 
+# JH - Now adjusts for different width screens
 def CMD_LOCATE():
     global J, tokenTypes, tokenArray
     tt = tokenTypes[J+1:J+4]                #MID$(Q$, J + 2, 3)
     if (tt == "N,N"):
-        sT = HEX4(40 * DEC(tokenArray[J+1]) + DEC(tokenArray[J+3]) + DEC(DEFAULTOPTIONS['SCREEN']))
+        sT = HEX4(SCRPITCH * DEC(tokenArray[J+1]) + DEC(tokenArray[J+3]) + DEC(DEFAULTOPTIONS['SCREEN']))
         PRINTOUT("LDA", "#$" + sT[0:2] + COMMENT(4))
         PRINTOUT("STA", "LOCATEH")
         PRINTOUT("LDA", "#$" + sT[2:4])
@@ -1237,7 +1245,7 @@ def CMD_LOCATE():
         J = J + 3; LDX("A"); J = J - 3
         PRINTOUT("STA", "TEMPL" + COMMENT(4))
         J = J + 4
-        PRINTOUT("LDA", "#$28")
+        PRINTOUT("LDA", "#$" + HEX2(SCRPITCH))   # was #$28")
         PRINTOUT("LDX", "#$" + DEFAULTOPTIONS['SCREEN'][0:2])
         includeArray[5] = True               #MID$(INCLUDE$, 6, 1) = "*"
         PRINTOUT("JSR", "MULADD")       # MULADD: (X:A)=A*Y+(X:TEMPL) if Y>0
@@ -1610,25 +1618,29 @@ def CMD_RIGHTBRACE():
     J = J + 1
 #end def
 
+# JH - Updated to set SCRPITCH as well as SCRHGT (TODO : Use ScreenParams struct/object)
 def CMD_SCREEN():
     # note: updated in version "l" (1.97)
     global J, tokenTypes, tokenArray
     if (tokenTypes[J+1] != 'N'): ERROROUT("Illegal function call")
     SCRMODE = DEC(tokenArray[J+1])
-    if (SCRMODE in [5, 7]):
-        SCRHGT = 12
-    elif (SCRMODE in [2, 3, 4, 6, 8]):
-        SCRHGT = 24
-    elif (SCRMODE in [9, 10]):
-        SCRHGT = 48
-    elif (SCRMODE in [11, 13]):
-        SCRHGT = 96
-    elif (SCRMODE in [12, 14, 15]):
-        SCRHGT = 192
-    #elif (SCRMODE == 16):      # ANTIC E, vector graphics mode
-    #   SCRMODE = 14 ; SCRHGT = 192 ; VECTGR = True
-    else:
-        ERROROUT("Invalid ANTIC mode")
+    if (SCRMODE < 2 or SCRMODE > 15) : ERROROUT("Invalid ANTIC mode")
+    SCRHGT = [ 0, 0, 24, 24, 24, 12, 24, 12, 24, 48, 48, 96, 192, 96, 192, 192 ][SCRMODE]
+    SCRPITCH = [ 0, 0, 40, 40, 40, 40, 20, 20, 10, 10, 20, 20, 20, 40, 40, 40 ][SCRMODE]
+#    if (SCRMODE in [5, 7]):
+#        SCRHGT = 12
+#    elif (SCRMODE in [2, 3, 4, 6, 8]):
+#        SCRHGT = 24
+#    elif (SCRMODE in [9, 10]):
+#        SCRHGT = 48
+#    elif (SCRMODE in [11, 13]):
+#        SCRHGT = 96
+#    elif (SCRMODE in [12, 14, 15]):
+#        SCRHGT = 192
+#    #elif (SCRMODE == 16):      # ANTIC E, vector graphics mode
+#    #   SCRMODE = 14 ; SCRHGT = 192 ; VECTGR = True
+#    else:
+#        ERROROUT("Invalid ANTIC mode")
 
     # Update "vector graphics" option address
     T = 0xBFD4 - SCRHGT - 8
@@ -1667,6 +1679,7 @@ def CMD_SELECT():
 #    J= J + 4
 ##end def
 
+# TODO - Validate option adresses (eg: SPRITES must be on 1k boundary)
 def CMD_SET():
     # SET option=location [label]
     global J, tokenTypes, tokenArray
@@ -1837,10 +1850,11 @@ def DEC(s):
 #end def
 
 def ERROROUT(s):
-    global LINENUM, gCurrentParseLine
+    global sourceLineNumber, gCurrentParseLine
     print("")
-    print("Error on line " + str(LINENUM) + ": " + s)
-    print("[" + str(LINENUM).lstrip() + "] " + gCurrentParseLine)
+    print("Error on line " + str(sourceLineNumber) + ": " + s)
+    print("[" + str(sourceLineNumber).lstrip() + "] " + gCurrentParseLine)
+    errorString = s
     exit()          # explode into little pieces
 #end def
 
@@ -1952,7 +1966,8 @@ def FCN_PEEK():
 
 #end def
 
-# Read a character from the screen (assumes 40-char wide screen?)
+# Read a character from the screen
+# JH - Adjusted to read from any ANTIC screen mode
 def FCN_SCREEN():
     global J, tokenTypes, tokenArray
     if (not tokenArray[J].findOneOf("AXY")):
@@ -1960,7 +1975,7 @@ def FCN_SCREEN():
     sT2 = "LD" + tokenArray[J]
     tokenType = tokenTypes[J+3:J+7]
     if (tokenType == "N,N)"):
-        sT = HEX4(40 * (DEC(tokenArray(J + 3)) - 1) + DEC(tokenArray(J + 5)) - 1 + DEC(DEFAULTOPTIONS['SCREEN']))
+        sT = HEX4(SCRPITCH * (DEC(tokenArray(J + 3)) - 1) + DEC(tokenArray(J + 5)) - 1 + DEC(DEFAULTOPTIONS['SCREEN']))
         PRINTOUT("LDA", "#$" + sT[0:2] + COMMENT(7))
         PRINTOUT("STA", "SCREENH")
         PRINTOUT("LDA", "#$" + sT[2:4])
@@ -1974,7 +1989,7 @@ def FCN_SCREEN():
         LDX("A")
         J = J + 2
         PRINTOUT("STA", "TEMPL" + COMMENT(7))
-        PRINTOUT("LDA", "#$28")
+        PRINTOUT("LDA", "#$" + HEX2(SCRPITCH))   # was #$28")
         PRINTOUT("LDX", "#$" + DEFAULTOPTIONS['SCREEN'][0:2])        # MID$(sOPTIONS(14, 0), 1, 2))
         PRINTOUT("JSR", "MULADD")
         PRINTOUT("STX", "SCREENH")
@@ -2102,8 +2117,8 @@ def PARSE(s):
     global gCurrentParseLine
     gCurrentParseLine = s
     #if (DEBUG):
-    #    print("PARSING " + str(LINENUM) + ": " + s)
-    print("PARSING " + str(LINENUM) + ": " + s)
+    #    print("PARSING " + str(sourceLineNumber) + ": " + s)
+    print("PARSING " + str(sourceLineNumber) + ": " + s)
 
     # replaced c$ with commands
     commands = { "CLS", "POKE", "LOCATE", "PRINT", "PUT", "CHAR", "SPRITE",
@@ -2133,7 +2148,7 @@ def PARSE(s):
                   "-", "+", "--", "++", "/", "*" }
 
     # For debugging purposes
-    if (LINENUM == 273):
+    if (sourceLineNumber == 273):
         print("breakpoint")
 
     if (DEBUG):

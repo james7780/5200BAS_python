@@ -4,3 +4,6 @@
 4. "Vector graphics" example (if VG implemented)
 
 Can convert ASM examples to 5200BAS.
+
+NB: Simple examples should be "BASIC only" (ie: allow writing of beginner programs without having to know about DLIST or PMBASE or sDMACTL or whatever)
+

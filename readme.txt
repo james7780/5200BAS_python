@@ -41,6 +41,8 @@ DASM filename.asm -f3
 
 At this point, if there are no errors, you should have a file "a.out". Rename this to .bin and run in your favourite emulator (which should be Jum52).
 
+Note: 5200basl.py may run DASM for you.
+
 
 Links and references:
 
@@ -50,6 +52,15 @@ http://sebastianmihai.com/main.php?t=62&n=Atari-5200-development-Shooting-Galler
 - "dev kit" 5200bas.zip contains TASM assembler (have not verified that it works)
 
 
+Changes made (v1.97 conversion):
+1. Straight conversion from QBX code to Python code
+2. Combined includel.bas into the main python script
+3. Modifications to strings and arrays to better suit Python lists and dictionaries
+4. Descriptive variable names
+5. Try reduce global variables and scope everything better
+6. Most error messages updated to provide more specific info (user-friendliness)
+7. Bug fixes to some small code and logic errors 
+8. Python script now calls DASM/TASM with the compiled asm output as input to the assembler
 
 [EOF]
 
