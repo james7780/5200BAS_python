@@ -1,0 +1,23 @@
+~CMD
+CLS     POKE    LOCATE  PRINT   PUT     ELSE    AUTHOR
+CHARSET TITLE   RETURN  SUB     GOSUB   MISSILESGOTO
+IF      UP      DOWN    LEFT    RIGHT   DEFINE  VOLUME
+DO      LOOP    EXIT    KEYPAD  INPUT   FOR     SOUND
+NEXT    DATA    POS     MOVEUP  }       SCREEN  PALETTE
+MEMCOPY MEMAREA IF_     FOR_    MULADD  PUSH    POP
+SET     SPRITES INTERNALDLIST   ATTRACT END     DIV8
+DIV16   MUL8    SELECT  CASE    CASE_   DO_     LOOP_
+~FCN
+JOYX(   JOYY(   TRIG(   INKEY   CHR$(   SCREEN( PEEK(
+JOYTRIG(JOYTRIG2
+~ASM
+LDA     LDX     LDY     STA     STX     STY     TAX
+TAY     TXA     TYA     TXS     TSX     JMP     JSR
+RTS     CMP     CPX     CPY     BNE     BEQ     BMI
+BPL     BCC     BCS     BVC     BVS     ADC     SBC
+AND     ORA     EOR     INC     DEC     INX     INY
+DEX     DEY     ROR     ROL     LSR     ASL     CLC
+SEC     CLD     SED     CLI     SEI     BRK     CLV
+PHA     PLA     PHP     PLP     BRK     BIT     RTI
+NOP     .ORG    .END    #INCLUDE.BYTE   .WORD   .TEXT
+

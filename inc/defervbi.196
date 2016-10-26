@@ -1,0 +1,13 @@
+;-----------------------------------------------------------
+; Deferred VBI handler          
+;-----------------------------------------------------------
+.ORG    $~O2~                   
+        LDA     KEYDB           ;check key debounce counter
+        BEQ     VBIDONE         ;if zero, skip
+        DEC     KEYDB           ;otherwise decrease by one
+VBIDONE PLA                     
+        TAY                     ;POP Y
+        PLA     
+        TAX                     ;POP X
+        PLA                     ;POP A
+        RTI     

@@ -5,15 +5,19 @@
 ' Note: DLI routine removed to make it noob-friendly
 
 TITLE OFF
-SET DLIST=$B000						' SO that 5200BAS does not include a DLIST in the ASM
+'SET DLIST=$B000						' SO that 5200BAS does not include a DLIST in the ASM
 
 '*************** Variables ***********************
-DEFINE line, $20								' Current DLI line
-DEFINE pm0pos, $21							' Current pos of P0
+DEFINE line, $80								' Current DLI line
+DEFINE pm0pos, $81							' Current pos of P0
+DEFINE Z,$82
 
-SCREEN 4
+'SCREEN 4
 CLS
 PRINT "PLAYER/MISSILE EXAMPLE"
+
+DO
+LOOP
 
 ';************* Setup hardware registers *************
 '
@@ -40,19 +44,21 @@ PALETTE $01, $22
 PALETTE $02, $0F
 PALETTE $03, $84
 
-A=0
-POKE SDLISTL,A
-POKE DLISTL,A
-A=$B0
-POKE SDLISTH,A
-POKE DLISTH,A
+' LEAVE DLIST at BF00, SCREEN DATA AT $1000
+'A=0
+'POKE SDLSTL,A
+'POKE DLISTL,A
+'A=$B0
+'POKE SDLSTH,A
+'POKE DLISTH,A
 
 CHARSET $F800
+
 ' 5200BAS TODO - POKE N,N
 A=$22
 POKE SDMCTL,A								' Enable display list DMA, and normal background
-A=$C0
-POKE NMIEN,A									' Enable NMI + DLI
+A=$40
+POKE NMIEN,A									' Enable VBI
 
 ';************ Draw display graphics *******************
 '
@@ -82,19 +88,18 @@ POKE NMIEN,A									' Enable NMI + DLI
 
 'POKE $80,$1800
 Y=$02
-X=$18
 Z=0
 FOR Z TO $17
 	A = $FF
-    POKE $1800+Y,A						';Bar 4 pixels wide of color 3
+    POKE $1000+Y,A						';Bar 4 pixels wide of color 3
 	'Y = Y + 2		TODO 5200BAS - Y = Y + 2
 	A = Y : A = A + 2 : Y = A
 	A = $55
-    POKE $1800+Y,A						';Bar 4 pixels wide of color 1
+    POKE $1000+Y,A						';Bar 4 pixels wide of color 1
     'Y = Y + 2
 	A = Y : A = A + 2 : Y = A
 	A = $AA
-    POKE $1800+Y,A						';Bar 4 pixels wide of color 2
+    POKE $1000+Y,A						';Bar 4 pixels wide of color 2
     'Y = Y + 6
 	A = Y : A = A + 6 : Y = A
 NEXT Z
@@ -163,24 +168,26 @@ MEMCOPY $B100,$24C0,8
 '        jmp     mvloop1         ;Continue looping
 
 ' Move player (main loop)
-X = $20
+Z=$20
 DO
 	DO
 		GOSUB WAITVSYNC
 		line=0
-		PUT (X, 20), pm1, 0, 8
-		pm0pos = X
-		X=X+1
-		IF X=$B0 THEN EXIT DO
+		PUT (Z, 20), pm1, 0, 8
+		pm0pos = Z
+		Z=Z+1
+		A = Z
+		IF A=$B0 THEN EXIT DO
 	LOOP
 	A=$04 : POKE PRIOR,A
 	DO
 		GOSUB WAITVSYNC
 		line=0
-		PUT (X, 20), pm1, 0, 8
-		pm0pos = X
-		X=X+1
-		IF X=$40 THEN EXIT DO
+		PUT (Z, 20), pm1, 0, 8
+		pm0pos = Z
+		Z=Z-1
+		A = Z
+		IF A=$40 THEN EXIT DO
 	LOOP
 	A=$01 : POKE PRIOR,A
 LOOP
@@ -223,20 +230,20 @@ RETURN
 '        rti             ;Done
 
 
-'************* Display list data ****************************
-.ORG    $B000
-dlist:
-			  .BYTE     $70,$70,$70      ;24 blank scanlines
-        .BYTE     $48,$00,$18      ;Mode 8 and Load memory scan $1800
-        .BYTE     $88,$88,$88,$88,$88,$88,$88   ;23 more line of mode 8
-        .BYTE     $88,$88,$88,$88,$88,$88,$88,$88,$88,$88,$88,$88,$88
-        .BYTE     $88,$88,$88
-        .BYTE     $41,$00,$10       ;Jump back to start at $1000
+''************* Display list data ****************************
+'.ORG    $B000
+'dlist:
+'        .BYTE     $70,$70,$70      ;24 blank scanlines
+'        .BYTE     $48,$00,$18      ;Mode 8 and Load memory scan $1800
+'        .BYTE     $88,$88,$88,$88,$88,$88,$88   ;23 more line of mode 8
+'        .BYTE     $88,$88,$88,$88,$88,$88,$88,$88,$88,$88,$88,$88,$88
+'        .BYTE     $88,$88,$88
+'        .BYTE     $41,$00,$B0       ;Jump back to start at $B000
 
 ';************* Player shape *********************************
 .ORG    $B100
 pm1:
-		    .BYTE     %00111100
+        .BYTE     %00111100
         .BYTE     %01000010
         .BYTE     %10100101
         .BYTE     %10000001

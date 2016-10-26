@@ -883,7 +883,7 @@ def CMD_DIV8():
 #end def
 
 # 5200BAS TODO - This function never gets called beacuse PARSE() does not
-# recognise as a command. If we add to PASRE() command list, then SET DLIST
+# recognise as a command. If we add to PARSE() command list, then SET DLIST
 # does not work as there is a confusion between the "command" and the "option"
 # (Maybe resolve by calling this function DLISTADDR or something?)
 def CMD_DLIST():
@@ -1381,6 +1381,8 @@ def CMD_PALETTE():
     J = J + 4
 #end def
 
+# TODO - POKE NV+X/Y,N
+# TODO - Avoid use of common POKEs by using BASIC functions
 def CMD_POKE():
     #'0    1  2345
     #'POKE NV,AXY
@@ -2148,7 +2150,7 @@ def PARSE(s):
                   "-", "+", "--", "++", "/", "*" }
 
     # For debugging purposes
-    if (sourceLineNumber == 273):
+    if (sourceLineNumber == 238):
         print("breakpoint")
 
     if (DEBUG):
@@ -2189,7 +2191,8 @@ def PARSE(s):
         # combine numbers
 #IF ((A$ >= "0" AND A$ <= "9") AND TOKTYPE$ <> "V") OR ((A$ = "$" OR A$ = "@") AND TOKTYPE$ = "") OR ((A$ >= "A" AND A$ <= "F") AND TOKTYPE$ = "N") THEN
         cn = ord(c)
-        if (((cn >= ord('0') and cn <= ord('9')) and tokenType != 'V') or ((c == '$' or c == '@') and tokenType == "") or ((cn >= ord('A') and cn <= ord('F')) and tokenType == 'N')):
+        #if (((cn >= ord('0') and cn <= ord('9')) and tokenType != 'V') or ((c == '$' or c == '@') and tokenType == "") or ((cn >= ord('A') and cn <= ord('F')) and tokenType == 'N')):
+        if (((cn >= ord('0') and cn <= ord('9')) and tokenType != 'V') or ((c == '$' or c == '@' or c == '%') and tokenType == "") or ((cn >= ord('A') and cn <= ord('F')) and tokenType == 'N')):
             tokenType = 'N'
             if ( T < length - 1):
                 c = s[T+1]
@@ -2346,7 +2349,8 @@ def TOHEX(s):
         if (len1 > 4):
             ERROROUT("Number too large")
         s = s.rjust(4, '0')
-    elif ('@' == s[0]):         # binary
+    #elif ('@' == s[0]):         # binary
+    elif ('@' == s[0] or '%' == s[0]):         # binary
         b = 0
         s = s[1:]
         for c in s:
@@ -2492,18 +2496,20 @@ def INCLUDEASM(includeName):
 #############################################################################
 # run main with concatenated argument list
 #############################################################################
-args = ""
+#args = ""
+testFile = "pm"
+args = "/D " + testFile + ".bas"             # for testing
 for s in sys.argv[1:]:
     args = args + s + ' ' 
 
-result = main("/D hello.bas")
+result = main(args)
 
 # If successfult, then run TASM/DASM on the output
-if (result && len(errorString) == 0)
+if (result and len(errorString) == 0):
 	# Run the compiled asm output thru the assembler
-	cmdline = "tasm hello.asm -f3 -ohello.bin"
-	if (useDASM)
-		cmdline = "dasm hello.asm -f3 -ohello.bin"
+	cmdline = "tasm " + testFile + ".asm -f3 -o" + testFile + ".bin"
+	if (useDASM):
+	    cmdline = "dasm " + testFile + ".asm -f3 -o" + testFile + ".bin"
 	p = subprocess.Popen(cmdline, shell=True)
 
 exit()

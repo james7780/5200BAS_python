@@ -1,0 +1,19 @@
+;-----------------------------------------------------------
+; KEYPAD -- Keypad buffer handler
+; On entry: A=key just pressed  
+;-----------------------------------------------------------
+.ORG    $~O5~                   
+        CMP     KEYLAST         ;same key as last time?
+        BNE     KEYOK
+        LDX     KEYDB           ;same key, check debounce timer
+        BNE     KEYDONE         ;if debounce isn't 0, reject the key
+KEYOK   STA     KEY             
+        STA     KEYLAST         ;store keypress
+KEYDONE LDA     #$02            ;reset debounce timer
+        STA     KEYDB
+        PLA     
+        TAY                     ;POP Y
+        PLA     
+        TAX                     ;POP X
+        PLA                     ;POP A
+        RTI     

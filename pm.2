@@ -1,0 +1,27 @@
+;-----------------------------------------------------------
+; INIT                          
+;-----------------------------------------------------------
+TITLE   .EQU    1               
+        LDA     #$BF            ; Display List high
+        STA     SDLSTH
+        LDA     #$00            ; Display List low
+        STA     SDLSTL
+        LDA     #$40            ; Enable deferred keyboard
+        STA     POKMSK
+        STA     IRQEN
+        LDA     #$B8
+        STA     CHBASE
+        LDA     #$22
+        STA     SDMCTL
+        LDA     #$C0            ; Enable DLI & VBI
+        STA     NMIEN
+        LDA     #$10
+        STA     LOCATEH
+        LDA     #$0E
+        STA     COLOR0
+        STA     COLOR1
+        LDA     #$20            ; Sprite page
+        STA     PMBASE
+        LDA     #$03
+        STA     GRACTL
+        CLI                     ; Enable Interrupts

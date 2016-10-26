@@ -1,0 +1,152 @@
+;---------------------------------------------------------------------
+; CLS                           
+;---------------------------------------------------------------------
+CLS     LDY     #$00            
+        LDA     #$00
+        STA     TEMPL
+        LDA     #$10
+           
+        STA     TEMPH
+CNEXT   LDA     #$00            
+        STA     (TEMPL),Y
+        INY     
+        CPY     #$00
+        BNE     CNEXT
+        INC     TEMPH
+        LDA     TEMPH
+        CMP     #$14
+           
+        BNE     CNEXT
+        RTS     
+;---------------------------------------------------------------------
+; PRINT                         
+;---------------------------------------------------------------------
+PRINT   LDY     #$00            
+PNEXT   LDA     (TEMPL),Y       
+        CMP     #$FF
+        BEQ     PDONE
+        STA     (LOCATEL),Y
+        INY     
+        JMP     PNEXT
+PDONE   RTS                     
+;---------------------------------------------------------------------
+; MEMCOPY                       
+;---------------------------------------------------------------------
+MEMCOPY LDY     #$00            
+MEMCPYA LDA     (FROML),Y       
+        STA     (TOL),Y
+        LDA     COUNTH
+        CMP     #$00
+        BNE     MEMCPY1
+        LDA     COUNTL
+        CMP     #$00
+        BEQ     MEMCPYD
+MEMCPY1 DEC     COUNTL          
+        LDA     COUNTL
+        CMP     #$FF
+        BNE     MEMCPY2
+        DEC     COUNTH
+MEMCPY2 INY                     
+        BNE     MEMCPYA
+        INC     FROMH
+        INC     TOH
+        JMP     MEMCPYA
+MEMCPYD RTS                     
+;---------------------------------------------------------------------
+; PUTSPH -- Clears sprite memory, and draws sprite in sprite memory
+; Required on entry:            
+;       [SPRITEL] = Page of sprite memory
+;       [TEMPL]   = Page of sprite ROM graphics
+;       FROMH     = Height of sprite
+;       X         = Vertical offset of sprite (0-159)
+; Changes:                      
+;       A, Y, SPRITEL, TEMPL, [SPRITEL]
+;---------------------------------------------------------------------
+PUTSPH  LDA     #$00            ; offset 0, also for writing $00
+        STA     SPRITEL         ; from beginning of sprite memory page
+        STA     TEMPL           ; from beginning of sprite graphics page
+        TAY                     ; start at offset 0
+PUTSPH1 STA     (SPRITEL),Y     ; clear byte of sprite memory
+        INY                     ; get ready to do next byte
+        BNE     PUTSPH1         ; done clearing page? (Y=0 when done)
+        TXA                     ;\
+        CLC                     ; \ put sprite at vertical offset
+        ADC     #$20            ; / 0-159 -> $20-$DF
+        STA     SPRITEL         ;/
+PUTSPH2 LDA     (TEMPL),Y       ; char to fill with from sprite graphics mem
+        STA     (SPRITEL),Y     ; write char to sprite memory
+        INY                     ; get ready to do next byte
+        CPY     FROMH           ; done moving?
+        BNE     PUTSPH2         ; if not, keep going
+        RTS                     ; all done, exit
+;-----------------------------------------------------------
+; Y2K FIX by Alan Davis, Dennis Debro, and Ronen Habot
+;-----------------------------------------------------------
+Y2K     LDY     #$00            ; Copy BIOS opening screen to RAM
+        LDA     #$FD
+        STA     TEMPH
+        LDA     #$58            ; Assume 2 port system
+        LDX     $FD32
+        CPX     #$E8            ; Is this a 4 port?
+        BNE     Y2K0            ; Jump if not
+        LDA     #$42            ; Yes, 4 port system
+Y2K0    STA     TEMPL           
+Y2K1    LDA     (TEMPL),Y       
+        STA     $0600,Y
+        INY     
+        BNE     Y2K1
+        LDY     #$50
+        INC     TEMPH
+Y2K2    LDA     (TEMPL),Y       
+        STA     $0700,Y
+        DEY     
+        BPL     Y2K2
+        LDA     #$D4            ; Point to copyright string
+        STA     $0724
+        LDA     #$BF
+        STA     $0725
+        LDX     #$0B            ; Store NOP's @ end
+        LDA     #$EA
+Y2K3    STA     $0732,X         
+        DEX     
+        BPL     Y2K3
+        LDA     #$60            ; Store RTS opcode @ end
+        STA     $0750
+        JSR     $0600           ; Show title screen
+        LDY     #$00            ; Clear RAM from $0600-$3FFF
+        STY     $80
+        LDA     #$06
+        STA     $81
+        JSR     CLRRAM
+        RTS     
+
+;-----------------------------------------------------------
+; Clear RAM                     
+;-----------------------------------------------------------
+CLRRAM  LDA     #$00            
+        STA     ($80),Y         ;Store data
+        INY                     ;Next byte
+        BNE     CLRRAM          ;Loop if this page isn't done
+        INC     $81             ;Do the next page
+        LDA     $81
+        CMP     #$40            ;Check if end of RAM
+        BNE     CLRRAM          ;Keep going if not
+        RTS
+;-----------------------------------------------------------
+; IRQ VECTORS                   
+;-----------------------------------------------------------
+OPTIONS:                        
+ .WORD   $0000                  
+ .WORD   $0000                  
+ .WORD   $2000                  
+ .WORD   $0000                  
+ .WORD   $1000                  
+ .WORD   $0000                  
+ .WORD   $0000                  
+ .WORD   $BF00                  
+ .WORD   $B800                  
+ .WORD   $FCB8                  
+ .WORD   $BD00                  
+ .WORD   $0000                  
+ .WORD   $FEA1                  
+ .WORD   $BB00                  
