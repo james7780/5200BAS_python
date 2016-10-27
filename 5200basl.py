@@ -63,7 +63,7 @@ IFStack = []
 #            "0000","0000","0000","0000","0000","0000","0000",
 #            "1000","3000","B800","BB00","BFB4", "BD00"], 
 #            ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""] ]
-# Default option addresses (routines and data)
+# Default option addresses (14 IRQ vectors + 6 option addresses)
 DEFAULTOPTIONS = dict( VIMIRQ = "FC03",
                         VVBLKI = "FCB8",
                         VVBLKD = "BC20",
@@ -546,8 +546,11 @@ def main(args):
     PRINTOUT("; IRQ VECTORS", "~")
     PRINTOUT(";-----------------------------------------------------------", "~")
     PRINTOUT("OPTIONS:", "~")
+    ##for i in range(14):
+    ##PRINTOUT(".WORD   $" + list(DEFAULTOPTIONS.values())[i], "~")
     for i in range(14):
-        PRINTOUT(".WORD   $" + list(DEFAULTOPTIONS.values())[i], "~")
+        sT = OPTIONNAMELIST[i]
+        PRINTOUT(".WORD   $" + DEFAULTOPTIONS[sT], "~")
 
     if (not 'CHARSET' in OVERRIDEOPTIONS):
         PRINTOUT("", "~")
@@ -2507,10 +2510,12 @@ result = main(args)
 # If successfult, then run TASM/DASM on the output
 if (result and len(errorString) == 0):
 	# Run the compiled asm output thru the assembler
+	print("Running assembler...")
 	cmdline = "tasm " + testFile + ".asm -f3 -o" + testFile + ".bin"
 	if (useDASM):
 	    cmdline = "dasm " + testFile + ".asm -f3 -o" + testFile + ".bin"
 	p = subprocess.Popen(cmdline, shell=True)
 
+print("Done.")
 exit()
 

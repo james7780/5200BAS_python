@@ -31,6 +31,29 @@ bgcolor="#C0E0FF" width="100%"><tr><td><b>
 </h1></div>
 
 <!--== description ================================================-->
+<b>Index</b><br>
+<a href="#NUM">&lt;num&gt;</a>&nbsp;&nbsp;
+<a href="#VAR">&lt;var&gt;</a>&nbsp;&nbsp;
+<a href="#EQUALS">=</a>&nbsp;&nbsp;
+<a href="#ADD">+</a>&nbsp;&nbsp;
+<a href="#ADDCARRY">++</a>&nbsp;&nbsp;
+<a href="#SUBTRACT">-</a>&nbsp;&nbsp;
+<a href="#SUBTRACTCARRY">--</a>&nbsp;&nbsp;
+<a href="#MULT2">*</a>&nbsp;&nbsp;
+<a href="#DIV2">/</a>&nbsp;&nbsp;
+<a href="#AND">AND</a>&nbsp;&nbsp;
+<a href="#OR">OR</a>&nbsp;&nbsp;
+<a href="#XOR">XOR</a>&nbsp;&nbsp;
+<a href="#RND">RND</a>&nbsp;&nbsp;
+<a href="#GT">&gt;</a>&nbsp;&nbsp;
+<a href="#GTEQ">&gt;=</a>&nbsp;&nbsp;
+<a href="#LT">&lt;</a>&nbsp;&nbsp;
+<a href="#LTEQ">&lt;=</a>&nbsp;&nbsp;
+<a href="#NOTEQ">&lt;&gt;</a>&nbsp;&nbsp;
+<a href="#SHIFT">&lt;&lt;</a>&nbsp;&nbsp;
+<br>
+*** JH NOTE *** expl text for some operators is missing 
+<br>
 <br><table border=0 width=90%><tr><td>
 <b><u>&lt;num&gt;</u></b><br>
 </td><td align=right><b>v1.00a</b></td></tr></table>
@@ -43,7 +66,7 @@ Decimal numbers need no prefix and should be in the range 0-65535.  Hexadecimal 
 <br>
 <b>Examples</b><br>
 <tt>255  $FF  @11111111  $B000</tt><br>
-
+*** JH NOTE *** Also use %11111111 for binary (for DASM compatibility)
 
 <br><hr><br><table border=0 width=90%><tr><td>
 <b><u>&lt;var&gt;</u></b><br>
@@ -96,7 +119,7 @@ A=A+{&lt;num&gt; | &lt;var&gt;}<br>
 <br>
 <b>Purpose</b><br>
 To add with carry, if any.<br>
-
+*** JH NOTE *** This is not increment operator? (ie: has different meaning to C ++ operator)
 
 <br><hr><br><table border=0 width=90%><tr><td>
 <b><u>- Operator</u></b><br>
@@ -120,6 +143,7 @@ A=A-{&lt;num&gt; | &lt;var&gt;}<br>
 <br>
 <b>Purpose</b><br>
 To subtract with carry, if any.<br>
+*** JH NOTE *** This is not decrement operator? (ie: has different meaning to C -- operator)
 
 
 <br><hr><br><table border=0 width=90%><tr><td>
