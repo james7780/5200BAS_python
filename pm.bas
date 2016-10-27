@@ -5,19 +5,23 @@
 ' Note: DLI routine removed to make it noob-friendly
 
 TITLE OFF
-'SET DLIST=$B000						' SO that 5200BAS does not include a DLIST in the ASM
+'SET DLIST=$B000                ' SO that 5200BAS does not include a DLIST in the ASM
 
 '*************** Variables ***********************
 DEFINE line, $80								' Current DLI line
 DEFINE pm0pos, $81							' Current pos of P0
 DEFINE Z,$82
 
-'SCREEN 4
+SET SCREEN=$1000
+SET SPRITES=$2000
+SET CHARSET=$F800
+
+SCREEN 7
 CLS
 PRINT "PLAYER/MISSILE EXAMPLE"
 
-DO
-LOOP
+'DO
+'LOOP
 
 ';************* Setup hardware registers *************
 '
@@ -89,7 +93,9 @@ POKE NMIEN,A									' Enable VBI
 'POKE $80,$1800
 Y=$02
 Z=0
-FOR Z TO $17
+' TODO - FIX FOR ... NEXT (DOES NOT WORK)
+'FOR Z TO $17
+DO
 	A = $FF
     POKE $1000+Y,A						';Bar 4 pixels wide of color 3
 	'Y = Y + 2		TODO 5200BAS - Y = Y + 2
@@ -102,7 +108,11 @@ FOR Z TO $17
     POKE $1000+Y,A						';Bar 4 pixels wide of color 2
     'Y = Y + 6
 	A = Y : A = A + 6 : Y = A
-NEXT Z
+	Z = Z + 1
+	A = Z
+	IF A = $17 THEN EXIT DO
+LOOP
+'NEXT Z
 
 ';************* Setup Player/Missile registers ***************
 '
@@ -138,6 +148,9 @@ POKE PRIOR,A
 'MEMCOPY pm1,$24C0,8
 MEMCOPY $B100,$2430,8
 MEMCOPY $B100,$24C0,8
+
+'DO
+'LOOP
 
 ';************ Move player ********************************************
 '
@@ -230,7 +243,7 @@ RETURN
 '        rti             ;Done
 
 
-''************* Display list data ****************************
+'************* Display list data ****************************
 '.ORG    $B000
 'dlist:
 '        .BYTE     $70,$70,$70      ;24 blank scanlines

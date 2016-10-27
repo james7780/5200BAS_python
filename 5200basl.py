@@ -504,7 +504,7 @@ def main(args):
         for i in range(1, SCRHGT):
             PRINTOUT(".BYTE", "$" + HEX2(SCRMODE))
             if (i == 101 and SCRMODE >= 14):
-                PRINTOUT(".BYTE", "$" + HEX2(0x40 + SCRMODE) + ";2nd part of ANTIC " + HEX(SCRMODE) + " screen")
+                PRINTOUT(".BYTE", "$" + HEX2(0x40 + SCRMODE) + ";2nd part of ANTIC " + HEX2(SCRMODE) + " screen")
                 PRINTOUT(".WORD", "$" + HEX4(DEC(DEFAULTOPTIONS['SCREEN']) + 0x1000) + ";address of screen memory")
 
         PRINTOUT(".BYTE", "$41")
@@ -1626,7 +1626,7 @@ def CMD_RIGHTBRACE():
 # JH - Updated to set SCRPITCH as well as SCRHGT (TODO : Use ScreenParams struct/object)
 def CMD_SCREEN():
     # note: updated in version "l" (1.97)
-    global J, tokenTypes, tokenArray
+    global J, tokenTypes, tokenArray, SCRMODE, SCRHGT, SCRPITCH
     if (tokenTypes[J+1] != 'N'): ERROROUT("Illegal function call")
     SCRMODE = DEC(tokenArray[J+1])
     if (SCRMODE < 2 or SCRMODE > 15) : ERROROUT("Invalid ANTIC mode")
