@@ -781,7 +781,7 @@ def CMD_ATTRACT():
 #end def
 
 def CMD_AUTHOR():
-    global J, tokenTypes, tokenArray
+    global J, tokenTypes, tokenArray, sCOPYRIGHT
     if (tokenTypes[J+1] == "S"):
         sCOPYRIGHT = tokenArray[J+1].strip('"');
         # was bug here - TITLE was being tested instead of copyright
@@ -1457,7 +1457,7 @@ def CMD_PRINT():
     argType = tokenTypes[J+1]
     if (argType == "S"):          #PRINT ""
         includeArray[1] = True           # MID$(INCLUDE$, 2, 1) = "*"
-        FIXSTR(nextToken)
+        nextToken = FIXSTR(nextToken)
         nextToken = nextToken + chr(255)
         T = stringData.find(nextToken)
         if (T == -1):
@@ -1761,7 +1761,7 @@ def CMD_SUB():
 #end def
 
 def CMD_TITLE():
-    global J, tokenTypes, tokenArray
+    global J, tokenTypes, tokenArray, sTITLE
     if (tokenTypes[J+1] == 'S'):
         sTITLE = tokenArray[J+1]
         if (len(sTITLE) > 20): ERROROUT("TITLE too long (20 chars max)")
@@ -2290,9 +2290,9 @@ def PRINTASC(s):
             if (len(a) > 0):
                 PRINTOUT('.TEXT', '"' + a + '"')
                 a = ""
-            #BUGFIX: PRINT ASM function uses $FF as terminator
-            #PRINTOUT(".BYTE", "$" + HEX2(cn))
-            PRINTOUT(".BYTE", "$FF")
+                #BUGFIX: PRINT ASM function uses $FF as terminator
+                #PRINTOUT(".BYTE", "$" + HEX2(cn))
+                PRINTOUT(".BYTE", "$FF")
         else:
             a = a + c
             if (len(a) >= 40):
@@ -2509,12 +2509,17 @@ result = main(args)
 
 # If successfult, then run TASM/DASM on the output
 if (result and len(errorString) == 0):
-	# Run the compiled asm output thru the assembler
-	print("Running assembler...")
-	cmdline = "tasm " + testFile + ".asm -f3 -o" + testFile + ".bin"
-	if (useDASM):
-	    cmdline = "dasm " + testFile + ".asm -f3 -o" + testFile + ".bin"
-	p = subprocess.Popen(cmdline, shell=True)
+    # Run the compiled asm output thru the assembler
+    print("Running assembler...")
+    cmdline = "tasm " + testFile + ".asm -f3 -o" + testFile + ".bin"
+    if (useDASM):
+        cmdline = "dasm " + testFile + ".asm -f3 -o" + testFile + ".bin"
+    process = subprocess.Popen(cmdline, shell=True)
+    out, err = process.communicate()
+    if (out is not None):
+        print(out)
+    if (err is not None):
+        print(err)
 
 print("Done.")
 exit()
