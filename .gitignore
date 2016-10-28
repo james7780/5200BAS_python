@@ -304,3 +304,7 @@ $RECYCLE.BIN/
 pm.1
 *.1
 pm.1
+pm.bin
+pm.2
+*.bak
+pm.ASM
