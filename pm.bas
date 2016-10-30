@@ -10,13 +10,14 @@ TITLE "PM EXAMPLE"
 AUTHOR "   (C) ANON 2112    "
 
 '*************** Variables ***********************
-DEFINE line, $80								' Current DLI line
-DEFINE pm0pos, $81							' Current pos of P0
+DEFINE line, $80              ' Current DLI line
+DEFINE pm0pos, $81            ' Current pos of P0
 DEFINE Z,$82
 
-SET SCREEN=$1000								' Screen data address = $1000 (display list must load from here)
-SET SPRITES=$2000								' Sprite data sddress
-SET CHARSET=$F800 ROM						' Set character set address (must be page-aligned)
+SET SCREEN=$1000                 ' Screen data address = $1000 (display list must load from here)
+SET SPRITES=$2000                ' Sprite data sddress
+SET CHARSET=$B400                ' Character set address (must be page-aligned)
+' Note: Do not try to use 5200 charset at $F800, will not work as 5200BAS is set up to use ASCII charset
 
 SCREEN 7
 CLS
@@ -29,8 +30,6 @@ PRINT "PLAYER/MISSILE EXAMPLE"
 PALETTE $01, $22
 PALETTE $02, $0F
 PALETTE $03, $84
-
-'CHARSET $F800
 
 ' 5200BAS TODO - POKE N,N
 A=$22
@@ -79,15 +78,17 @@ LOOP
 '        lda     #$01           ;Give players priority over playfield
 '        sta     PRIOR
 
-A=$3A
-POKE SDMCTL,A				' Enable display list DMA + 2 line sprites resolution + normal width background
-SPRITES ON							' Enable PM graphics display
+'A=$2A
+'POKE DMACTL,A       'Enable display list DMA + 2 line sprites resolution + normal width background
+'POKE SDMCTL,A
+'SPRITES DOUBLE       ' Enable PM graphics display, double-height sprites
+SPRITES ON
 A=$03
 POKE GRACTL,A
 PALETTE $05, $1E
 ' TODO 5200BAS - Sprite size and priority (eg: "SPRITEATTR" command)
 A=$03
-POKE SIZEP0,A
+POKE SIZEP0,A         ' $3 = quad width
 A=$01
 POKE PRIOR,A
 
@@ -96,8 +97,10 @@ POKE PRIOR,A
 ' TODO 5200BAS - MEMCOPY label, label, count
 'MEMCOPY pm1,$2430,8
 'MEMCOPY pm1,$24C0,8
-MEMCOPY $B100,$2030,$08
-MEMCOPY $B100,$20C0,$08
+MEMCOPY $B100,$2430,$8
+MEMCOPY $B100,$24C0,$8
+
+' Note: PM0 starts at PMBASE + 512 in double-line mode (PMBASE + 1024 in single-line mode)
 
 'DO
 'LOOP
@@ -140,7 +143,7 @@ DO
 		pm0pos = Z
 		Z=Z+1
 		A = Z
-    POKE GRAFP0,A
+'    POKE GRAFP0,A
 		POKE HPOSP0,A
 		IF A=$80 THEN EXIT DO
 	LOOP
@@ -152,7 +155,7 @@ DO
 		pm0pos = Z
 		Z=Z-1
 		A = Z
-    POKE GRAFP0,A		
+'   POKE GRAFP0,A		
 		POKE HPOSP0,A
 		IF A=$10 THEN EXIT DO
 	LOOP

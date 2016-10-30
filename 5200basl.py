@@ -476,6 +476,8 @@ def main(args):
         print ('"' + stringData + '"')
         CONSCOLOR(7)
 
+    # JH 2016-10-30 - Note: 5200BAS is set up to use custom ASCII
+    # character set, 5200 charset at F800 will not work! 
     PRINTASC(stringData)
 
     if (not 'VKYBDF' in OVERRIDEOPTIONS):
@@ -624,6 +626,7 @@ def ATASCII(s):
         cn = ord(c)
         if (cn in range(32, 96)):
             cn += 32
+            #cn -= 32
         elif (cn == 96):
             cn = 71
         elif (cn in range(97, 123)):
@@ -1712,10 +1715,15 @@ def CMD_SOUND():
     J = J + 4
 #end def
 
+# JH 2016-10-30 - Double-height sprites (SDMCTL = $2E)
+# TODO - Update PUTSPRITE to work with double-heigth sprite by reading SDMCTL value
+# TODO - This function should also update GRACTL (and maybe PRIOR)
 def CMD_SPRITES():
     global J, tokenArray
     if (tokenArray[J+1] == "ON"):
         PRINTOUT("LDA", "#$3E" + COMMENT(2))
+    elif (tokenArray[J+1] == "DOUBLE"):
+        PRINTOUT("LDA", "#$2E" + COMMENT(2))
     elif (tokenArray[J+1] == "OFF"):
         PRINTOUT("LDA", "#$22" + COMMENT(2))
     else:

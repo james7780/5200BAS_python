@@ -63,6 +63,7 @@ Changes made (v1.97 conversion):
 8. Python script now calls DASM/TASM with the compiled asm output as input to the assembler
 9. SCREEN command now supports ANTIC modes 2 to 14 (sets up display list depending on mode)
 10. Added some more examples
+11. SPRITE DOUBLE command added 
 
 [EOF]
 
