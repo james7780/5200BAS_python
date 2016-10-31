@@ -10,7 +10,9 @@
 	- Examples
 	- Images
 
-Too much "pointer" stuff. Should be made easy for beginners (not have to worry about where the sprite data is, or where the display list is, etc). Use "DATA SPRITE" or "DEFINE SPRITE(n)" and have the pointer/address stuff done automatically.
+Too much "pointer" stuff. Should be made easy for beginners (not have to worry about where the sprite data is, 
+or where the display list is, etc). Use "DATA SPRITE" or "DEFINE SPRITE(n)" and have the pointer/address stuff 
+done automatically.
 
 Make sprites easier to work with:
 	- DEFSPRITE n, label, size
@@ -23,7 +25,7 @@ Add HSCROLL <0...15> command (updates the HSCROL register)
 ATTRACT should be RESETATTRACT
 
 CHARSET should be deprecated tp SET CHARSET
-- should give an error if address not on page boundary (LSB shoud be 0x00)
+- [DONE] should give an error if address not on page boundary (LSB shoud be 0x00)
 
 DATA help should say it should be associated with a label (ie: there is no READ statement)
 
@@ -43,9 +45,9 @@ ENVELOPE <channel>, <name> - set channel n to use envelope data at label <name> 
 Could also do basic checks for:
 	- memory overlaps
 	- interrupt routine locations
-	- dlist and charset addresses
+	- [DONE] dlist and charset addresses
 
-More informative error messages
+[DONE] More informative error messages
 
 From INtyBasic:
 CONST
@@ -65,9 +67,16 @@ WIP - vector graphics
 
 
 Python-specific:
-1. Use maps for OPTIONS arrays
-2. Use map for SCRMODE to SCRHGT
+1. [DONE] Use maps for OPTIONS arrays
+2. [DONE] Use map for SCRMODE to SCRHGT
 
-Python script should call DASM with the correct filename/options if compilation is successful.
- 
+[DONE] Python script should call DASM with the correct filename/options if compilation is successful.
+
+- [DONE] No error if DASM fails
+- [DONE] User needs warning messages about sprites addr not on 1K or 2K boundary
+- User needs warning about PRINT not working in mode 5 and 7
+- SPRITES ON needs to set GRACTL
+- Need to fix PUT / PUTSPRITE
+- Add WAITVBL <line> command
+- Fix FOR...NEXT
 

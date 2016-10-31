@@ -15,6 +15,7 @@
 
 import sys
 import datetime
+import math
 import subprocess
 
 # VERSION constant
@@ -54,7 +55,7 @@ tokenArray = { }
 tokenTypes = ""             # NB: tokenTypes index = Q$ index - 1!
 DOStack = []                # list as stack (use append() and pop())
 FORStack = []
-SELECTStack = []            # 2-dimensional array
+SELECTStack = [ [], [], [] ]            # 2-dimensional array
 IFStack = []
 
 # 2-dimensional array
@@ -80,8 +81,8 @@ DEFAULTOPTIONS = dict( VIMIRQ = "FC03",
                         VTIMR4 = "0000",
                         SCREEN = "1000",
                         SPRITES = "3000",
-                        CHARSET = "B800",
-                        STRINGS = "BB00",
+                        CHARSET = "B400",           # JH - changed
+                        STRINGS = "BB00",           # JH - changed
                         DLIST = "BF00",							# was BFB4
                         VECTTBL = "BD00" )
 # Ordered list of option names (as dictionary above can become unordered)
@@ -98,9 +99,7 @@ DOCount = 0 ; FORCount = 0 ; SELECTCount = 0; IFCount = 0
 # DODEPTH/FORDEPTH/SELDEPTH replaced by len(stack/list)
 SCRMODE = 2         # ANTIC screen mode (text mode 2 by default)
 SCRHGT = 24         # Number of visible mode lines in the display list
-SCRPITCH = 40				# Screen "pitch" (number of bytes per line)
-# TODO - Replace SCRMODE/SCRHGT/SCRPITCH with ScreenParams dict
-ScreenParams = {'mode': 2, 'height': 24, 'pitch': 40}
+SCRPITCH = 40       # Screen "pitch" (number of bytes per line)
 TITLE = True        # Show title when booting
 stringData = ""     # Strings data, written to STRINGS section
 charData = ""       # Char data, never used?
@@ -162,7 +161,7 @@ def main(args):
       print ("  *    Debug output")
       print ("")
       print ("Error: No input file given")
-      return False
+      return False, ""
 
     # converted F$ to inFileName
     # converted F2$ to outFileName
@@ -372,7 +371,7 @@ def main(args):
                     elif (token3 == "/"):
                         if (lhsToken != "A"): ERROROUT("Type mismatch (/ operator only allowed on A)")
                         if (tokenTypes[J+4] != 'N'): ERROROUT("Type mismatch (denominator must be a number)")
-                        T = log(DEC(tokenArray[J+4])) / log(2)
+                        T = math.log(DEC(tokenArray[J+4])) / math.log(2)
                         T2 = 1
                         while (T2 <= T):
                             if (T2 == 1):
@@ -477,7 +476,7 @@ def main(args):
         CONSCOLOR(7)
 
     # JH 2016-10-30 - Note: 5200BAS is set up to use custom ASCII
-    # character set, 5200 charset at F800 will not work! 
+    # character set, 5200 charset at F800 will not work!
     PRINTASC(stringData)
 
     if (not 'VKYBDF' in OVERRIDEOPTIONS):
@@ -616,7 +615,7 @@ def main(args):
     
     print ("")
     print ("Compilation complete.")
-    return True
+    return True, outFileName
 #end def main()
 
 # Convert ASCII string to ATASCII
@@ -778,6 +777,7 @@ def BYTE(s):
 #end def
 
 def CMD_ATTRACT():
+    global J
     PRINTOUT("LDA", "#$00" + COMMENT(1))
     PRINTOUT("STA", "ATRACT")
     J = J + 1
@@ -795,12 +795,12 @@ def CMD_AUTHOR():
 #end def
 
 def CMD_CASE(MINUS):
-    global J, tokenTypes, tokenArray
+    global J, tokenTypes, tokenArray, SELECTStack, SELECTCount
     token = tokenArray[J+1]
     if (token in "AXY"):
         ERROROUT("Illegal variable A/X/Y")
 
-    if (len(SELECTStack) < 1): ERROROUT("CASE outside SELECT CASE")
+    if (len(SELECTStack[2]) < 1): ERROROUT("CASE outside SELECT CASE")
     #if (SELECTStack(SELDEPTH - 1, 2) > SELECTStack(SELDEPTH - 1, 0)):
     if (SELECTStack[2][-1] > SELECTStack[0][-1]):
         PRINTOUT("JMP", "SC" + str(SELECTStack[0][-1]).lstrip())
@@ -815,7 +815,7 @@ def CMD_CASE(MINUS):
 
     if (token != "ELSE"):
         index = SELECTStack[1][-1]               # SELECTStack(SELDEPTH - 1, 1)
-        sT2 = {"CMP", "CPX", "CPY"}[index]
+        sT2 = ["CMP", "CPX", "CPY"][index]
         PRINTOUT(sT2, token + COMMENT(2))
         token = str(SELECTCount).lstrip()
 
@@ -1013,8 +1013,8 @@ def CMD_FOR(MINUS):
     sT = str(FORCount).lstrip()
     PRINTOUT("FR" + sT + ":", "~" + COMMENT(4))
     J = J + 3
-    LDX("A")
-    PRINTOUT("CMP", tokenArray[J])
+    LDX("A")                                # Load A from the "final" number or variable
+    PRINTOUT("CMP", tokenArray[J-2])        # Compare to the count variable
     if (not MINUS):
         PRINTOUT("BCC", "EF" + sT)
     else:
@@ -1618,7 +1618,7 @@ def CMD_RIGHT():
 
 # what is this?
 def CMD_RIGHTBRACE():
-    global includeArray
+    global J, includeArray
     includeArray[2] = True                   # MID$(INCLUDE$, 3, 1) = "*"
     PRINTOUT("JSR", "RIGHT" + COMMENT(1))
     includeArray[11] = True                   # MID$(INCLUDE$, 12, 1) = "*"
@@ -1626,7 +1626,7 @@ def CMD_RIGHTBRACE():
     J = J + 1
 #end def
 
-# JH - Updated to set SCRPITCH as well as SCRHGT (TODO : Use ScreenParams struct/object)
+# JH - Updated to set screen "mode", "pitch" and "height"
 def CMD_SCREEN():
     # note: updated in version "l" (1.97)
     global J, tokenTypes, tokenArray, SCRMODE, SCRHGT, SCRPITCH
@@ -1635,16 +1635,7 @@ def CMD_SCREEN():
     if (SCRMODE < 2 or SCRMODE > 15) : ERROROUT("Invalid ANTIC mode")
     SCRHGT = [ 0, 0, 24, 24, 24, 12, 24, 12, 24, 48, 48, 96, 192, 96, 192, 192 ][SCRMODE]
     SCRPITCH = [ 0, 0, 40, 40, 40, 40, 20, 20, 10, 10, 20, 20, 20, 40, 40, 40 ][SCRMODE]
-#    if (SCRMODE in [5, 7]):
-#        SCRHGT = 12
-#    elif (SCRMODE in [2, 3, 4, 6, 8]):
-#        SCRHGT = 24
-#    elif (SCRMODE in [9, 10]):
-#        SCRHGT = 48
-#    elif (SCRMODE in [11, 13]):
-#        SCRHGT = 96
-#    elif (SCRMODE in [12, 14, 15]):
-#        SCRHGT = 192
+
 #    #elif (SCRMODE == 16):      # ANTIC E, vector graphics mode
 #    #   SCRMODE = 14 ; SCRHGT = 192 ; VECTGR = True
 #    else:
@@ -1659,7 +1650,7 @@ def CMD_SCREEN():
 #end def
 
 def CMD_SELECT():
-    global J, tokenArray
+    global J, tokenArray, SELECTStack, SELECTCount
     if (tokenArray[J+1] != "CASE"): ERROROUT("Syntax error - CASE expected after SELECT")
     T = "AXY".find(tokenArray[J+2])
     if (T == -1): ERROROUT("A/X/Y expected")
@@ -1695,6 +1686,21 @@ def CMD_SET():
     if (not option in DEFAULTOPTIONS): ERROROUT("Syntax error - SET option name not recognised")
     if (tokenTypes[J+2:J+4] != "ON"): ERROROUT("Syntax error - '=' and address expected")
     DEFAULTOPTIONS[option] = tokenArray[J+3]
+    # JH - Validate option addresses (eg: SPRITES must be on 1k boundary)
+    address = DEC(tokenArray[J+3])
+    if (option == "SCREEN" and (address < 0x21C or address > 0x3F00)):
+        print("WARNING: Screen data should be in unreserved RAM area!")
+    if (option == "SPRITES" and (address % 1024 != 0)):
+        print("WARNING: Sprites address must be on 1K boundary!")
+    if (option == "CHARSET" and (address < 0x21C or address > 0xF800)):
+        print("WARNING: Bad CHARSET address!")
+    if (option == "CHARSET" and (address % 256 != 0)):
+        print("WARNING: CHARSET must be on page boundary (LSB must be 0x00)!")
+    if (option == "STRINGS" and (address < 0x4000 or address > 0xBFD3)):
+        print("WARNING: STRINGS address shoudl be in ROM!")
+    if (option == "DLIST" and (address < 0x21C or address > 0xBFD3)):
+        print("WARNING: DLIST should be in ROM or unreserved RAM area!")
+        
     if (tokenTypes[J+4] == "V"):
         OVERRIDEOPTIONS[option] = tokenArray[J+4]           # set override option to label
         J = J + 1
@@ -2104,7 +2110,7 @@ def J5(reg):
     return J
 #end def
 
-# reg = W$
+# Load a register A/X/Y from the current token value
 def LDX(reg):
     global J, tokenTypes, tokenArray
     tokenType = tokenTypes[J];
@@ -2386,6 +2392,7 @@ def BACKSLASH(text):
 # @note if includeName is empty, then process all marked includes
 def INCLUDEASM(includeName):
     global useDASM, DEFAULTOPTIONS, OPTIONNAMELIST, includeArray, outFile
+    global DEBUG
 
     # "local" function definition
     def GETNUM(s):
@@ -2404,6 +2411,8 @@ def INCLUDEASM(includeName):
     # "local" function definition (parent = INCLUDES())
     def INCLUDEFILE(fileName):
         fileName = "INC\\" + fileName + ".INC"
+        if (DEBUG):
+            print("Including file " + fileName)
         file = open(fileName, 'r')
         for line in file:
             tildePos = line.find('~')
@@ -2507,27 +2516,30 @@ def INCLUDEASM(includeName):
 #############################################################################
 # run main with concatenated argument list
 #############################################################################
-#args = ""
-testFile = "pm"
-args = "/D " + testFile + ".bas"             # for testing
+args = ""
 for s in sys.argv[1:]:
     args = args + s + ' ' 
 
-result = main(args)
+result, asmFileName = main(args)
 
 # If successfult, then run TASM/DASM on the output
 if (result and len(errorString) == 0):
     # Run the compiled asm output thru the assembler
-    print("Running assembler...")
-    cmdline = "tasm " + testFile + ".asm -f3 -o" + testFile + ".bin"
+    print("Running assembler on file " + asmFileName + "...")
+    pos = asmFileName.find(".")
+    binFileName = asmFileName[0:pos] + ".bin"
+
+    cmdline = "tasm " + asmFileName + " -f3 -o" + binFileName
     if (useDASM):
-        cmdline = "dasm " + testFile + ".asm -f3 -o" + testFile + ".bin"
-    process = subprocess.Popen(cmdline, shell=True)
+        cmdline = "dasm " + asmFileName + " -f3 -o" + binFileName
+    process = subprocess.Popen(cmdline, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = process.communicate()
     if (out is not None):
+        print("Assembler says:")
         print(out)
-    if (err is not None):
-        print(err)
+    #if (err is not None):
+    #    print(err)
+    #p = subprocess.run(cmdline, 
 
 print("Done.")
 exit()

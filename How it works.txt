@@ -29,7 +29,7 @@ Post-includes (.1 file):
 	Include default charset if no custom charset specified
 End of post-includes
 
-	Data: Strings
+	Data: Strings (as ASCII characters)
 	Include deferred keypad handler (if not custom deferred keypad handler specified)
 	Include deferred VBI handler (if no custom deferred VBI handler specified)
 	Data: Default display list data (if no custom DLIST specified)
