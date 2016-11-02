@@ -2,19 +2,44 @@
 <!-- expref.html, Copyright (C) Jeffry Johnston, 2004              -->
 <!--===============================================================-->
 
-<html><head>
+<html>
+<style type="text/css">
+
+BODY
+{
+    FONT-SIZE: 12pt;
+    COLOR: black;
+    FONT-FAMILY: Verdana;
+}
+
+A
+{
+    FONT-WEIGHT: bold;
+    COLOR: blue;
+    FONT-FAMILY: Verdana;
+    TEXT-DECORATION: none
+}
+
+A:hover
+{
+    FONT-WEIGHT: bold;
+    COLOR: red;
+    FONT-FAMILY: Verdana;
+    TEXT-DECORATION: none
+}
+</style>	
+	
+<head>
 
 <!--== browser title ==============================================-->
 <title>5200BAS Expression Reference</title>
 <!--===============================================================-->
 
-</head><body><table cellpadding="5" cellspacing="0" border="0"
-bgcolor="#C0E0FF" width="100%"><tr><td><b>
+</head>
+<body>
 
 <!--== page path ==================================================-->
-[ <a href="http://www.kidsquid.com/">Main</a> :
- <a href="../../compilers.html">Compilers</a> :
- <a href="../5200bas.html">5200BAS</a> : Expressions ]
+[ <a href="cmdref.html">5200BAS Command Reference</a> ]
 <!--===============================================================-->
 
 </b>
@@ -22,38 +47,51 @@ bgcolor="#C0E0FF" width="100%"><tr><td><b>
 <!--== horizontal menu ============================================-->
 <!--===============================================================-->
 
-</td></tr></table><div align="center"><h1>
-
+<div align="center">
+<h1>
 <!--== big title ==================================================-->
 5200BAS Expression Reference
 <!--===============================================================-->
-
-</h1></div>
+</h1>
+</div>
 
 <!--== description ================================================-->
-<b>Index</b><br>
-<a href="#NUM">&lt;num&gt;</a>&nbsp;&nbsp;
-<a href="#VAR">&lt;var&gt;</a>&nbsp;&nbsp;
-<a href="#EQUALS">=</a>&nbsp;&nbsp;
-<a href="#ADD">+</a>&nbsp;&nbsp;
-<a href="#ADDCARRY">++</a>&nbsp;&nbsp;
-<a href="#SUBTRACT">-</a>&nbsp;&nbsp;
-<a href="#SUBTRACTCARRY">--</a>&nbsp;&nbsp;
-<a href="#MULT2">*</a>&nbsp;&nbsp;
-<a href="#DIV2">/</a>&nbsp;&nbsp;
-<a href="#AND">AND</a>&nbsp;&nbsp;
-<a href="#OR">OR</a>&nbsp;&nbsp;
-<a href="#XOR">XOR</a>&nbsp;&nbsp;
-<a href="#RND">RND</a>&nbsp;&nbsp;
-<a href="#GT">&gt;</a>&nbsp;&nbsp;
-<a href="#GTEQ">&gt;=</a>&nbsp;&nbsp;
-<a href="#LT">&lt;</a>&nbsp;&nbsp;
-<a href="#LTEQ">&lt;=</a>&nbsp;&nbsp;
-<a href="#NOTEQ">&lt;&gt;</a>&nbsp;&nbsp;
-<a href="#SHIFT">&lt;&lt;</a>&nbsp;&nbsp;
+<b>Index:</b><br>
+
+<table border=1 width=100% cellpadding="3" cellspacing="0">
+	<tr>
+		<td width=10%><a href="#NUM">&lt;num&gt;</a></td>
+		<td width=10%><a href="#VAR">&lt;var&gt;</a></td>
+		<td width=10%><a href="#EQUALS">=</a></td>
+		<td width=10%><a href="#ADD">+</a></td>
+		<td width=10%><a href="#ADDCARRY">++</a></td>
+		<td width=10%><a href="#SUBTRACT">-</a></td>
+		<td width=10%><a href="#SUBTRACTCARRY">--</a></td>
+		<td width=10%><a href="#MULT2">*</a></td>
+		<td width=10%><a href="#DIV2">/</a></td>
+		<td width=10%><a href="#AND">AND</a></td>
+	</tr>
+	<tr>
+		<td><a href="#OR">OR</a></td>
+		<td><a href="#XOR">XOR</a></td>
+		<td><a href="#RND">RND</a></td>
+		<td><a href="#GT">&gt;</a></td>
+		<td><a href="#GTEQ">&gt;=</a></td>
+		<td><a href="#LT">&lt;</a></td>
+		<td><a href="#LTEQ">&lt;=</a></td>
+		<td><a href="#NOTEQ">&lt;&gt;</a></td>
+		<!--
+		<td><a href="#LSHIFT">&lt;&lt;</a></td>
+		<td><a href="#RSHIFTEQ">&gt;&gt;=</a></td>
+		--!>
+	</tr>
+</table>
+
+
 <br>
-*** JH NOTE *** expl text for some operators is missing 
 <br>
+<a name=NUM></a>
+<hr>
 <br><table border=0 width=90%><tr><td>
 <b><u>&lt;num&gt;</u></b><br>
 </td><td align=right><b>v1.00a</b></td></tr></table>
@@ -68,6 +106,7 @@ Decimal numbers need no prefix and should be in the range 0-65535.  Hexadecimal 
 <tt>255  $FF  @11111111  $B000</tt><br>
 *** JH NOTE *** Also use %11111111 for binary (for DASM compatibility)
 
+<a name=VAR></a>
 <br><hr><br><table border=0 width=90%><tr><td>
 <b><u>&lt;var&gt;</u></b><br>
 </td><td align=right><b>v1.00a</b></td></tr></table>
@@ -78,7 +117,7 @@ variablename<br>
 <b>Remarks</b><br>
 &lt;var&gt; does not include the registers A, X, or Y.  These will be mentioned separately if they are valid.<br>
 
-
+<a name=EQUALS></a>
 <br><hr><br><table border=0 width=90%><tr><td>
 <b><u>= Operator</u></b><br>
 </td><td align=right><b>v1.00a</b></td></tr></table>
@@ -89,14 +128,13 @@ X={A | &lt;var&gt; | &lt;num&gt;}<br>
 Y={A | &lt;var&gt; | &lt;num&gt;}<br>
 &lt;var&gt;={A | X | Y | &lt;num&gt; | &lt;var&gt;}<br>
 <br>
-<br>
 <b>Remarks</b><br>
 Only the above combinations of assigns are legal.  If &lt;var&gt;=&lt;var&gt; is used, the A register is modified by an intermediate step.<br>
 <br>
 <b>Example</b><br>
 <tt>A=L:A=A*2:N=A:A=A*4:A=A+N:A=A+20:N=A 'N=L*10+20</tt><br>
 
-
+<a name=ADD></a>
 <br><hr><br><table border=0 width=90%><tr><td>
 <b><u>+ Operator</u></b><br>
 </td><td align=right><b>v1.00a</b></td></tr></table>
@@ -109,7 +147,7 @@ A=A+{&lt;num&gt; | &lt;var&gt;}<br>
 <td>Y=Y+1</td><td align=right><b>v1.01a</b></td></tr></table>
 &lt;var&gt;=&lt;var&gt;+1<br>
 
-
+<a name=ADDCARRY></a>
 <br><hr><br><table border=0 width=90%><tr><td>
 <b><u>++ Operator</u></b><br>
 </td><td align=right><b>v1.70</b></td></tr></table>
@@ -121,6 +159,7 @@ A=A+{&lt;num&gt; | &lt;var&gt;}<br>
 To add with carry, if any.<br>
 *** JH NOTE *** This is not increment operator? (ie: has different meaning to C ++ operator)
 
+<a name=SUBTRACT></a>
 <br><hr><br><table border=0 width=90%><tr><td>
 <b><u>- Operator</u></b><br>
 </td><td align=right><b>v1.00a</b></td></tr></table>
@@ -133,7 +172,7 @@ A=A-{&lt;num&gt; | &lt;var&gt;}<br>
 <td>Y=Y-1</td><td align=right><b>v1.01a</b></td></tr></table>
 &lt;var&gt;=&lt;var&gt;-1<br>
 
-
+<a name=SUBTRACTCARRY></a>
 <br><hr><br><table border=0 width=90%><tr><td>
 <b><u>-- Operator</u></b><br>
 </td><td align=right><b>v1.70</b></td></tr></table>
@@ -145,7 +184,7 @@ A=A-{&lt;num&gt; | &lt;var&gt;}<br>
 To subtract with carry, if any.<br>
 *** JH NOTE *** This is not decrement operator? (ie: has different meaning to C -- operator)
 
-
+<a name=MULT2></a>
 <br><hr><br><table border=0 width=90%><tr><td>
 <b><u>* Operator</u></b><br>
 </td><td align=right><b>v1.00a</b></td></tr></table>
@@ -162,7 +201,7 @@ MULADD Statement<br>
 <b>Example</b><br>
 <tt>A=A*32</tt><br>
 
-
+<a name=DIV2></a>
 <br><hr><br><table border=0 width=90%><tr><td>
 <b><u>/ Operator</u></b><br>
 </td><td align=right><b>v1.00a</b></td></tr></table>
@@ -171,60 +210,120 @@ MULADD Statement<br>
 A=A/&lt;num&gt;<br>
 <br>
 <b>Remarks</b><br>
-&lt;num&gt; should be a power of 2.  If it is not, it will be rounded into one.<br>
+&lt;num&gt; should be a power of 2. If it is not, it will be rounded into one.<br>
 <br>
 <b>Example</b><br>
 <tt>A=A/128</tt><br>
 
-
+<a name=AND></a>
 <br><hr><br><table border=0 width=90%><tr><td>
 <b><u>AND Operator</u></b><br>
 </td><td align=right><b>v1.00a</b></td></tr></table>
 <br>
 <b>Syntax</b><br>
 A=A AND {&lt;num&gt; | &lt;var&gt;}<br>
+<br>
+<b>Purpose</b><br>
+Bitwise AND operation.<br>
+<br>
 
-
+<a name=OR></a>
 <br><hr><br><table border=0 width=90%><tr><td>
 <b><u>OR Operator</u></b><br>
 </td><td align=right><b>v1.00a</b></td></tr></table>
 <br>
 <b>Syntax</b><br>
 A=A OR {&lt;num&gt; | &lt;var&gt;}<br>
+<br>
+<b>Purpose</b><br>
+Bitwise OR operation.<br>
+<br>
 
-
+<a name=RND></a>
 <br><hr><br><table border=0 width=90%><tr><td>
 <b><u>RND Variable</u></b><br>
 </td><td align=right><b>v1.00a</b></td></tr></table>
 <br>
 <b>Purpose</b><br>
-To return a value between 0 and 255.<br>
+To return a random value between 0 and 255.<br>
 <br>
 <b>Example</b><br>
 See the DO...LOOP statements in the command reference.<br>
 
-
+<a name=XOR></a>
 <br><hr><br><table border=0 width=90%><tr><td>
 <b><u>XOR Operator</u></b><br>
 </td><td align=right><b>v1.00a</b></td></tr></table>
 <br>
 <b>Syntax</b><br>
 A=A XOR {&lt;num&gt; | &lt;var&gt;}<br>
-<!--===============================================================-->
+<br>
+<b>Purpose</b><br>
+Bitwise XOR operation.<br>
+<br>
 
-<table cellpadding="5" cellspacing="0" border="0" width="100%"><tr>
+<a name=GT></a>
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>&gt; comparison operator</u></b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+IF A > {&lt;num&gt; | &lt;var&gt;}<br>
+<br>
 
-<!--== image ======================================================-->
-<!--===============================================================-->
+<a name=GTEQ></a>
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>&gt;= comparison operator</u></b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+IF A &gt;= {&lt;num&gt; | &lt;var&gt;}<br>
+<br>
 
-<td valign="top" width="15%">
+<a name=LT></a>
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>&lt; comparison operator</u></b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+IF A &lt; {&lt;num&gt; | &lt;var&gt;}<br>
+<br>
 
-<!--== vertical menu ==============================================-->
-<!--===============================================================-->
+<a name=LTEQ></a>
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>&lt;= comparison operator</u></b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+IF A &lt;= {&lt;num&gt; | &lt;var&gt;}<br>
+<br>
 
-</td><td valign="top">
+<a name=NOTEQ></a>
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>&lt;&gt; comparison operator</u></b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+IF A &lt;&gt; {&lt;num&gt; | &lt;var&gt;}<br>
+<br>
 
-<!--== menu descriptions ==========================================-->
-<!--===============================================================-->
+<!--
+<a name=LSHIFT></a>
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>&lt;&lt; shift operator</u></b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+A = A &lt;&lt; {&lt;num&gt; | &lt;var&gt;}<br>
+<br>
 
-</td></tr></table></body></html>
+<a name=RSHIFTEQ></a>
+<br><hr><br><table border=0 width=90%><tr><td>
+<b><u>&gt;&gt;= shift operator</u></b><br>
+</td><td align=right><b>v1.00a</b></td></tr></table>
+<br>
+<b>Syntax</b><br>
+A = A &gt;&gt;= {&lt;num&gt; | &lt;var&gt;}<br>
+<br>
+--!>
+

@@ -2,19 +2,44 @@
 <!-- cmdref.html, Copyright (C) Jeffry Johnston, 2004              -->
 <!--===============================================================-->
 
-<html><head>
+<html>
+<style type="text/css">
+
+BODY
+{
+    FONT-SIZE: 12pt;
+    COLOR: black;
+    FONT-FAMILY: Verdana;
+}
+
+A
+{
+    FONT-WEIGHT: bold;
+    COLOR: blue;
+    FONT-FAMILY: Verdana;
+    TEXT-DECORATION: none
+}
+
+A:hover
+{
+    FONT-WEIGHT: bold;
+    COLOR: red;
+    FONT-FAMILY: Verdana;
+    TEXT-DECORATION: none
+}
+</style>	
+<head>
 
 <!--== browser title ==============================================-->
 <title>5200BAS Command Reference</title>
 <!--===============================================================-->
 
-</head><body><table cellpadding="5" cellspacing="0" border="0"
-bgcolor="#C0E0FF" width="100%"><tr><td><b>
+</head>
+
+<body>
 
 <!--== page path ==================================================-->
-[ <a href="http://www.kidsquid.com/">Main</a> :
- <a href="../../compilers.html">Compilers</a> :
- <a href="../5200bas.html">5200BAS</a> : Commands ]
+[ <a href="expref.html">5200BAS Expression Reference</a> ]
 <!--===============================================================-->
 
 </b>
@@ -22,84 +47,108 @@ bgcolor="#C0E0FF" width="100%"><tr><td><b>
 <!--== horizontal menu ============================================-->
 <!--===============================================================-->
 
-</td></tr></table><div align="center"><h1>
-
+<div align="center">
+<h1>
 <!--== big title ==================================================-->
 5200BAS Command Reference
 <!--===============================================================-->
-
-</h1></div>
+</h1>
+</div>
 
 <!--== description ================================================-->
-<b>Index</b><br><br>
+<b>Alphabetical Index:</b><br>
 
-<a href="#LABEL">label:</a>&nbsp;&nbsp;
-<a href="#COMMENT">'</a>&nbsp;&nbsp;
-<a href="#COLON">:</a>&nbsp;&nbsp;
-<a href="#RIGHTBRACE">}</a>&nbsp;&nbsp;
-<a href="#ASM">ASM</a>&nbsp;&nbsp;
-<a href="#ATTRACT">ATTRACT</a>&nbsp;&nbsp;
-<a href="#AUTHOR">AUTHOR</a>&nbsp;&nbsp;
-<a href="#CHARSET">CHARSET</a>&nbsp;&nbsp;
-<a href="#CLS">CLS</a>&nbsp;&nbsp;
-<a href="#DATA">DATA</a>&nbsp;&nbsp;
-<a href="#DEFINE">DEFINE</a>&nbsp;&nbsp;
-<a href="#DIV8">DIV8</a>&nbsp;&nbsp;
-<a href="#DIV16">DIV16</a>&nbsp;&nbsp;
-<a href="#DLIST">DLIST</a>&nbsp;&nbsp;
-<a href="#DO">DO</a>&nbsp;&nbsp;
-<a href="#DOWN">DOWN</a>&nbsp;&nbsp;
-<a href="#SUB">END SUB</a>&nbsp;&nbsp;
-<a href="#DO">EXIT DO</a>&nbsp;&nbsp;
-<a href="#FOR">EXIT FOR</a>&nbsp;&nbsp;
-<a href="#SELECT">EXIT SELECT</a>&nbsp;&nbsp;
-<a href="#SUB">EXIT SUB</a>&nbsp;&nbsp;
-<a href="#FOR">FOR</a>&nbsp;&nbsp;
-<a href="#GOSUB">GOSUB</a>&nbsp;&nbsp;
-<a href="#GOTO">GOTO</a>&nbsp;&nbsp;
-<a href="#IF">IF</a>&nbsp;&nbsp;
-<a href="#INKEY">INKEY</a>&nbsp;&nbsp;
-<a href="#INPUT">INPUT</a>&nbsp;&nbsp;
-<a href="#INTERNAL">INTERNAL</a>&nbsp;&nbsp;
-<a href="#JOYTRIG">JOYTRIG</a>&nbsp;&nbsp;
-<a href="#JOYTRIG2">JOYTRIG2</a>&nbsp;&nbsp;
-<a href="#JOYX">JOYX</a>&nbsp;&nbsp;
-<a href="#JOYY">JOYY</a>&nbsp;&nbsp;
-<a href="#KEYPAD">KEYPAD</a>&nbsp;&nbsp;
-<a href="#LEFT">LEFT</a>&nbsp;&nbsp;
-<a href="#LOCATE">LOCATE</a>&nbsp;&nbsp;
-<a href="#DO">LOOP</a>&nbsp;&nbsp;
-<a href="#MEMAREA">MEMAREA</a>&nbsp;&nbsp;
-<a href="#MEMCOPY">MEMCOPY</a>&nbsp;&nbsp;
-<a href="#MISSILES">MISSILES</a>&nbsp;&nbsp;
-<a href="#MOVEUP">MOVEUP</a>&nbsp;&nbsp;
-<a href="#MUL8">MUL8</a>&nbsp;&nbsp;
-<a href="#MULADD">MULADD</a>&nbsp;&nbsp;
-<a href="#FOR">NEXT</a>&nbsp;&nbsp;
-<a href="#PALETTE">PALETTE</a>&nbsp;&nbsp;
-<a href="#PEEK">PEEK</a>&nbsp;&nbsp;
-<a href="#POKE">POKE</a>&nbsp;&nbsp;
-<a href="#POP">POP</a>&nbsp;&nbsp;
-<a href="#POS">POS</a>&nbsp;&nbsp;
-<a href="#PRINT">PRINT</a>&nbsp;&nbsp;
-<a href="#PUSH">PUSH</a>&nbsp;&nbsp;
-<a href="#PUT">PUT</a>&nbsp;&nbsp;
-<a href="#GOSUB">RETURN</a>&nbsp;&nbsp;
-<a href="#RIGHT">RIGHT</a>&nbsp;&nbsp;
-<a href="#SCREEN">SCREEN</a>&nbsp;&nbsp;
-<a href="#SELECT">SELECT CASE</a>&nbsp;&nbsp;
-<a href="#SET">SET</a>&nbsp;&nbsp;
-<a href="#SOUND">SOUND</a>&nbsp;&nbsp;
-<a href="#SPRITES">SPRITES</a>&nbsp;&nbsp;
-<a href="#SUB">SUB</a>&nbsp;&nbsp;
-<a href="#TITLE">TITLE</a>&nbsp;&nbsp;
-<a href="#UP">UP</a>&nbsp;&nbsp;
-<a href="#VOLUME">VOLUME</a>
+<table border=1 width=100% cellpadding="3" cellspacing="0">
+	<tr>
+		<td width=8%><a href="#LABEL">label:</a></td>
+		<td width=8%><a href="#COLON">:</a></td>
+		<td width=8%><a href="#RIGHTBRACE">}</a></td>
+		<td width=8%><a href="#ASM">ASM</a></td>
+		<td width=8%><a href="#ATTRACT">ATTRACT</a></td>
+		<td width=8%><a href="#AUTHOR">AUTHOR</a></td>
+		<td width=8%><a href="#CHARSET">CHARSET</a></td>
+		<td width=8%><a href="#CLS">CLS</a></td>
+		<td width=8%><a href="#DATA">DATA</a></td>
+		<td width=8%><a href="#DEFINE">DEFINE</a></td>
+		<td width=8%><a href="#DIV8">DIV8</a></td>
+		<td width=8%><a href="#DIV16">DIV16</a></td>
+	</tr>
+	<tr>
+		<td><a href="#DLIST">DLIST</a></td>
+		<td><a href="#DO">DO</a></td>
+		<td><a href="#DOWN">DOWN</a></td>
+		<td><a href="#SUB">END SUB</a></td>
+		<td><a href="#DO">EXIT DO</a></td>
+		<td><a href="#FOR">EXIT FOR</a></td>
+		<td><a href="#SELECT">EXIT SELECT</a></td>
+		<td><a href="#SUB">EXIT SUB</a></td>
+		<td><a href="#FOR">FOR</a></td>
+		<td><a href="#GOSUB">GOSUB</a></td>
+		<td><a href="#GOTO">GOTO</a></td>
+		<td><a href="#IF">IF</a></td>
+	</tr>
+	<tr>
+		<td><a href="#INKEY">INKEY</a></td>
+		<td><a href="#INPUT">INPUT</a></td>
+		<td><a href="#INTERNAL">INTERNAL</a></td>
+		<td><a href="#JOYTRIG">JOYTRIG</a></td>
+		<td><a href="#JOYTRIG2">JOYTRIG2</a></td>
+		<td><a href="#JOYX">JOYX</a></td>
+		<td><a href="#JOYY">JOYY</a></td>
+		<td><a href="#KEYPAD">KEYPAD</a></td>
+		<td><a href="#LEFT">LEFT</a></td>
+		<td><a href="#LOCATE">LOCATE</a></td>
+		<td><a href="#DO">LOOP</a></td>
+		<td><a href="#MEMAREA">MEMAREA</a></td>
+	</tr>
+	<tr>
+		<td><a href="#MEMCOPY">MEMCOPY</a></td>
+		<td><a href="#MISSILES">MISSILES</a></td>
+		<td><a href="#MOVEUP">MOVEUP</a></td>
+		<td><a href="#MUL8">MUL8</a></td>
+		<td><a href="#MULADD">MULADD</a></td>
+		<td><a href="#FOR">NEXT</a></td>
+		<td><a href="#PALETTE">PALETTE</a></td>
+		<td><a href="#PEEK">PEEK</a></td>
+		<td><a href="#POKE">POKE</a></td>
+		<td><a href="#POP">POP</a></td>
+		<td><a href="#POS">POS</a></td>
+		<td><a href="#PRINT">PRINT</a></td>
+	</tr>
+	<tr>
+		<td><a href="#PUSH">PUSH</a></td>
+		<td><a href="#PUT">PUT</a></td>
+		<td><a href="#GOSUB">RETURN</a></td>
+		<td><a href="#RIGHT">RIGHT</a></td>
+		<td><a href="#SCREEN">SCREEN</a></td>
+		<td><a href="#SELECT">SELECT CASE</a></td>
+		<td><a href="#SET">SET</a></td>
+		<td><a href="#SOUND">SOUND</a></td>
+		<td><a href="#SPRITES">SPRITES</a></td>
+		<td><a href="#SUB">SUB</a></td>
+		<td><a href="#TITLE">TITLE</a></td>
+		<td><a href="#UP">UP</a></td>
+	</tr>
+	<tr>
+		<td><a href="#VOLUME">VOLUME</a></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+</table>
+
+
 <br>
-
-
-<br><a name=LABEL><hr><br><table border=0 width=90%><tr><td>
-<b><u>&lt;text&gt;:</u></b><br>
+<a name=LABEL></a><hr><br><table border=0 width=90%><tr><td>
+<b>&lt;text&gt;:</b><br>
 </td><td align=right><b>v1.00a</b></td></tr></table>
 <br>
 <b>Syntax</b><br>
@@ -118,7 +167,7 @@ Spaces are permitted before the label.<br>
 GOTO FREEZE</tt><br>
 
 
-<br><a name=COMMENT><hr><br><table border=0 width=90%><tr><td>
+<br><a name=COMMENT></a><hr><br><table border=0 width=90%><tr><td>
 <b><u>'</u> text</b><br>
 </td><td align=right><b>v1.00a</b></td></tr></table>
 <br>
@@ -136,7 +185,7 @@ Comments can be placed either alone or after all other program statements on a l
 A=RND 'get a random number</tt><br>
 
 
-<br><a name=COLON><hr><br><table border=0 width=90%><tr><td>
+<br><a name=COLON></a><hr><br><table border=0 width=90%><tr><td>
 <b><u>:</u> Separator</b><br>
 </td><td align=right><b>v1.00a</b></td></tr></table>
 <br>
@@ -155,7 +204,7 @@ IF A=29 THEN GOTO ABC:A=A+5 'the A=A+5 will be executed when A<>29<br>
 IF A&gt;=30 THEN:N=0:END IF</tt><br>
 
 
-<br><a name=RIGHTBRACE><hr><br><table border=0 width=90%><tr><td>
+<br><a name=RIGHTBRACE></a><hr><br><table border=0 width=90%><tr><td>
 <b><u>}</u> Statement</b><br>
 </td><td align=right><b>v1.10a</b></td></tr></table>
 <br>
@@ -175,7 +224,7 @@ right.inc, chkrow.inc, pos.inc, mul8.inc, moveup.inc<br>
 <tt>PRINT "HELLO, "}:PRINT "WORLD" 'prints HELLO, WORLD</tt><br>
 
 
-<br><a name=ASM><hr><br><table border=0 width=90%><tr><td>
+<br><a name=ASM></a><hr><br><table border=0 width=90%><tr><td>
 <b>ASM Commands</b><br>
 </td><td align=right><b>v1.10a</b></td></tr></table>
 <br>
@@ -206,7 +255,7 @@ Each ASM statement should be alone on the line.  Use ; rather than ' for trailin
 .BYTE $00,$01,$02</tt><br>
 
 
-<br><a name=ATTRACT></a><hr><br><table border=0 width=90%><tr><td>
+<br><a name=ATTRACT></a></a><hr><br><table border=0 width=90%><tr><td>
 <b><u>ATTRACT</u> Statement</b><br>
 </td><td align=right><b>v1.50</b></td></tr></table>
 <br>
@@ -223,7 +272,7 @@ A<br>
 <tt>INPUT K:ATTRACT</tt><br>
 ***JH NOTE - Should be RESETATTRACT ***
 
-<br><a name=AUTHOR></a><hr><br><table border=0 width=90%><tr><td>
+<br><a name=AUTHOR></a></a><hr><br><table border=0 width=90%><tr><td>
 <b><u>AUTHOR</u> Statement</b><br>
 </td><td align=right><b>v1.70</b></td></tr></table>
 <br>
@@ -752,7 +801,7 @@ A=JOYTRIG2:IF ZFLAG=TRUE THEN &nbsp; 'button pushed?<br>
 &nbsp;&nbsp;LOOP UNTIL ZFLAG=FALSE &nbsp; &nbsp; &nbsp; &nbsp;'loop until button released<br>
 &nbsp;&nbsp;'click code goes here<br>
 END IF<br>
-
+</tt>
 
 <br><a name=JOYX></a><hr><br><table border=0 width=90%><tr><td>
 <b><u>JOYX</u> Function</b><br>
